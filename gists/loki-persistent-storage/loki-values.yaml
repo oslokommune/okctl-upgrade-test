@@ -1,0 +1,16 @@
+# To apply run:
+# kubectl apply -f loki-pvc.yaml
+# helm3 -n monitoring upgrade --install loki grafana/loki -f loki-vals.yaml
+
+# Taken from https://github.com/grafana/helm-charts/blob/main/charts/loki/values.yaml
+persistence:
+  enabled: true
+  size: 10Gi
+  accessModes:
+  - ReadWriteOnce
+  annotations: {}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: loki
+  subPath: "data"
+  existingClaim: "loki"
