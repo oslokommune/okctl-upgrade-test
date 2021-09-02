@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 
 # monitoring
 ## Add resources definition to Loki
