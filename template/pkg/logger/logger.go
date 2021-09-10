@@ -16,28 +16,36 @@ type Logger struct {
 	level Level
 }
 
-func (l Logger) Debug(a ...interface{}) {
-	if l.level <= Debug {
-		fmt.Println(a...)
+func (l Logger) Debug(args ...interface{}) {
+	if l.levelIsEnabled(Debug) {
+		out := make([]interface{}, 0)
+		out = append(out, "[DEBUG]")
+		out = append(out, args...)
+
+		fmt.Println(out...)
 	}
 }
 
-func (l Logger) Debugf(format string, a ...interface{}) {
-	if l.level <= Debug {
-		fmt.Printf(format, a...)
+func (l Logger) Debugf(format string, args ...interface{}) {
+	if l.levelIsEnabled(Debug) {
+		fmt.Printf(format, args...)
 	}
 }
 
-func (l Logger) Info(a ...interface{}) {
-	if l.level <= Info {
-		fmt.Println(a...)
+func (l Logger) Info(args ...interface{}) {
+	if l.levelIsEnabled(Info) {
+		fmt.Println(args...)
 	}
 }
 
-func (l Logger) Infof(format string, a ...interface{}) {
-	if l.level <= Info {
-		fmt.Printf(format, a...)
+func (l Logger) Infof(format string, args ...interface{}) {
+	if l.levelIsEnabled(Info) {
+		fmt.Printf(format, args...)
 	}
+}
+
+func (l Logger) levelIsEnabled(level Level) bool {
+	return l.level <= level
 }
 
 func New(level Level) Logger {
