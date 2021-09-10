@@ -2,7 +2,7 @@ This repository contains functionality for upgrading [okctl](https://github.com/
 
 # Developing principles
 
-* Upgrades [MUST]((https://www.ietf.org/rfc/rfc2119.txt)) support `-f` and `--force`. That is, when executing an upgrade binary without these arguments, it MUST
+* Upgrades [MUST](https://www.ietf.org/rfc/rfc2119.txt) support `-f` and `--force`. That is, when executing an upgrade binary without these arguments, it MUST
   make zero changes. Only when run with `-f` or `--force` must the upgrade make any changes.
 * Upgrades MUST be idempotent. How to implement is this is up to the update itself, but the straight forward way is
   using the same logic as okctl uses to check if an upgrade has been run, which is checking the cluster's state storage. 
