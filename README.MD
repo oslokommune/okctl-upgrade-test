@@ -2,11 +2,11 @@ This repository contains functionality for upgrading [okctl](https://github.com/
 
 # Developing principles
 
-* Upgrades MUST support `-f` and `--force`. That is, when executing an upgrade binary without these arguments, it MUST
+* Upgrades [MUST]((https://www.ietf.org/rfc/rfc2119.txt)) support `-f` and `--force`. That is, when executing an upgrade binary without these arguments, it MUST
   make zero changes. Only when run with `-f` or `--force` must the upgrade make any changes.
 * Upgrades MUST be idempotent. How to implement is this is up to the update itself, but the straight forward way is
   using the same logic as okctl uses to check if an upgrade has been run, which is checking the cluster's state storage. 
-* Any code in a migration [MUST NOT](https://www.ietf.org/rfc/rfc2119.txt) import code from another migration.
+* Any code in a migration MUST NOT import code from another migration.
   Upgrading is a complex domain, and this is to ensure that upgrades stays simple and isolated. If downstream migrations
   depend on an upstream migrations, we might break any of the downstream migrations, which we want to avoid. If you want
   to reuse logic, either duplicate it or import it from somewhere common outside the migrations. However, make sure
@@ -19,14 +19,15 @@ This repository contains functionality for upgrading [okctl](https://github.com/
 
 * `cp -r template <okctl target version>`, where `<okctl target version>` is explained under [Binaries](#binaries).
    * Example: `cp -r template 0.0.60`
-* Optional: To have a look at the release before publishing, run `make release-test UPGRADE_VERSION=0.0.65`, which will
+* Edit the upgrade to your needs
+* Optional: To have a look at the release files before publishing, run `make release-test UPGRADE_VERSION=0.0.65`, which will
 create a `dist` directory.
 * To make the actual release, do:
 
 ```shell
 TAG="0.0.5" # Or 0.0.6.some-hotfix
 git add $TAG
-git commit -m "✔ Add upgrade $TAG"
+git commit -m "✅ Add upgrade $TAG"
 git tag -s "$TAG" -m "Upgrade $TAG"
 git push --atomic origin main $TAG
 ```
