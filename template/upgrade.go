@@ -4,10 +4,15 @@ import (
 	"github.com/oslokommune/okctl-upgrade/template/pkg/somecomponent"
 )
 
-func upgrade(context Context) error {
-	c := somecomponent.New(context.logger, context.force)
+func upgrade(context Context, flags cmdFlags) error {
+	opts := somecomponent.Opts{
+		DryRun:  flags.dryRun,
+		Confirm: flags.confirm,
+	}
 
-	err := c.Run()
+	c := somecomponent.New(context.logger, opts)
+
+	err := c.Upgrade()
 	if err != nil {
 		return err
 	}

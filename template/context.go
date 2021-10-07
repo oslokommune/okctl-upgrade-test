@@ -6,7 +6,6 @@ import (
 
 type Context struct {
 	logger logger.Logger
-	force  bool
 }
 
 func newContext(flags cmdFlags) Context {
@@ -19,6 +18,5 @@ func newContext(flags cmdFlags) Context {
 
 	return Context{
 		logger: logger.New(level),
-		force:  flags.force,
 	}
 }
