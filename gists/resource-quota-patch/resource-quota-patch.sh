@@ -31,7 +31,7 @@ ALERTMANAGER_PATCH="[{\"op\":\"replace\",\"path\":\"/spec/template/spec/containe
 kubectl -n monitoring patch statefulset alertmanager-kube-prometheus-stack-alertmanager --type="json" --patch "${ALERTMANAGER_PATCH}"
 
 ## Add resources definition to Prometheus
-PROMETHEUS_PATCH="[{\"op\":\"replace\",\"path\":\"/spec/template/spec/containers/0/resources\",\"value\":{\"limits\":{\"cpu\":\"300m\",\"memory\":\"500Mi\"},\"requests\":{\"cpu\":\"150m\",\"memory\":\"400Mi\"}}}]"
+PROMETHEUS_PATCH="[{\"op\":\"replace\",\"path\":\"/spec/template/spec/containers/0/resources\",\"value\":{\"limits\":{\"cpu\":\"300m\",\"memory\":\"1Gi\"},\"requests\":{\"cpu\":\"150m\",\"memory\":\"800Mi\"}}}]"
 
 kubectl -n monitoring patch statefulset prometheus-kube-prometheus-stack-prometheus --type="json" --patch "${PROMETHEUS_PATCH}"
 
