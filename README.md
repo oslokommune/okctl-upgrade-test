@@ -42,7 +42,7 @@ changes to reuse logic doesn't break any of the migrations using the common logi
 * To make the actual release, do
 
 ```shell
-TAG="0.0.5" # Or 0.0.6.some-hotfix
+TAG="0.0.5.some-component"
 git add $TAG
 git commit -m "✅ Add upgrade $TAG"
 git tag -s "$TAG" -m "Upgrade $TAG"
@@ -78,16 +78,18 @@ okctl-upgrade_<okctl target version>_<os>_<arch>
 For instance, after running upgrades with target version `0.0.5` and `0.0.6`, the okctl infrastructure should be as if creating
 the infrastructure with okctl version `0.0.6`.
 
-The version format can be a semantic version (e.g. `0.0.10`), or a semantic version with a hotfix (`0.0.10.some-hotfix`). If using
-a hotfix, it MUST be on the format `<semver>.<hotfix identifier>` where `<hotfix identifier>` MUST NOT contain dots or
-underscores.
+The version format can be a semantic version (e.g. `0.0.10`), or a semantic version with an identifier (`0.0.10.some-identifier`).
+If using an identifier, it MUST be on the format `<semver>.<identifier>` where `<identifier>` MUST NOT contain dots or underscores.
+
+The intention of `identifier` is to be a human readable string that communicates what is being upgraded, for instance `loki`
+or `argocd`. So an identifier SHOULD be present.
 
 TL;DR, some examples:
 
 ```shell
-0.0.63
-0.0.64
-0.0.65.some-hotfix
+0.0.64.argocd
+0.0.65.loki-pvc
+0.0.66 # valid, but not preferable as it's missing an identifier 
 ```
 
 * `os` is `Linux` or `Darwin`
@@ -99,7 +101,7 @@ Examples:
 * `okctl-upgrade_0.0.64_Linux_amd64`
 * `okctl-upgrade_0.0.64_Darwin_amd64`
 * `okctl-upgrade_0.0.65_Linux_amd64`
-* `okctl-upgrade_0.0.65.some-hotfix_Linux_amd64`
+* `okctl-upgrade_0.0.65.loki-persistence_Linux_amd64`
 
 ## Releases
 
