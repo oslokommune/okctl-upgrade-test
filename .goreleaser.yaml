@@ -1,13 +1,13 @@
-# This is created by goreleaser. Configuration: https://goreleaser.com/customization/release/
 before:
   hooks:
     # You may remove this if you don't use go modules.
     - go mod tidy
     # you may remove this if you don't need go generate
     - go generate ./...
+
+# Configuration: https://goreleaser.com/customization/build/
 builds:
-  -
-    env:
+  - env:
       - CGO_ENABLED=0
     goos:
       - linux
@@ -38,5 +38,6 @@ changelog:
       - '^docs:'
       - '^test:'
 
+# Configuration: https://goreleaser.com/customization/release/
 release:
   name_template: "{{ .ProjectName }}_{{ .Env.UPGRADE_VERSION }}"
