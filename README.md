@@ -39,12 +39,11 @@ changes to reuse logic doesn't break any of the migrations using the common logi
 * Edit the upgrade to your needs (:information_source: Tip: start with `upgrade.go`)
 * Optional: To have a look at the release files before publishing, run `make release-test UPGRADE_VERSION=0.0.65.some-component`,
   which will create a `dist` directory.
-* To make the actual release, do
+* To make the actual release, first push the upgrade to the main branch (through a PR, preferrably). Then run the following:
 
 ```shell
-TAG="0.0.5.some-component"
-git add $TAG
-git commit -m "✅ Add upgrade $TAG"
+TAG="0.0.5+some-component" # GitHub actions will then look for the dir 0.0.5.some-component
+git checkout main && git pull
 git tag -s "$TAG" -m "Upgrade $TAG"
 git push --atomic origin main $TAG
 ```
