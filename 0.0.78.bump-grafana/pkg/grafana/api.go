@@ -17,7 +17,7 @@ type Upgrader struct {
 
 // Upgrade upgrades the component
 func (c Upgrader) Upgrade() error {
-	c.logger.Info("Upgrading Grafana")
+	c.logger.Info("Upgrading Grafana []")
 
 	kubeconfigPath := os.Getenv("KUBECONFIG")
 	if kubeconfigPath == "" {
