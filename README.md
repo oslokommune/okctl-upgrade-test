@@ -50,6 +50,8 @@ git push --atomic origin main $TAG
 
 GitHub actions takes care of the rest.
 
+## Testing the release
+
 To test a release, you can run the above commands from a branch. Aftwards, you must
 
 * delete the release in GitHub
@@ -59,6 +61,15 @@ To test a release, you can run the above commands from a branch. Aftwards, you m
 git tag -d $TAG
 git push --delete origin $TAG
 ```
+
+# How to update an upgrade
+
+Update existing released upgrades with care, as some users may have already downloaded and executed them. Also note that upgrades binaries are downloaded and cached when running okctl upgrade.
+
+To update:
+* Do whatever changes you need to the upgrade, and merge it to the main branch (directly or through a PR)
+* Delete the existing release by running the `git tag` commands under [testing the release](#testing-the-release) above
+* Create a new release by tagging a commit, as described under [How to create an upgrade](#how-to-create-an-upgrade) above.
 
 # Outputs
 
