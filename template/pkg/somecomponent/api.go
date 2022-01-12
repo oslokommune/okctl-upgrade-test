@@ -23,7 +23,7 @@ func (c SomeComponent) Upgrade() error {
 	if !c.dryRun && !c.confirm {
 		c.logger.Info("This will delete all logs.")
 
-		answer, err := c.askUser("Do you want to proceed?")
+		answer, err := c.askUser("Do you want to continue?")
 		if err != nil {
 			return fmt.Errorf("prompting user: %w", err)
 		}

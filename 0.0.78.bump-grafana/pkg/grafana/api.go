@@ -29,7 +29,13 @@ func (c Upgrader) Upgrade() error {
 		return fmt.Errorf("acquiring kubectl client: %w", err)
 	}
 
-	err = preflight(c.logger, kubectlClient)
+	if c.dryRun {
+		c.logger.Info("Simulating upgrade")
+	} else {
+		c.logger.Info("Patching Grafana")
+	}
+
+	err = c.preflight(kubectlClient)
 	if err != nil {
 		if errors.Is(err, ErrNothingToDo) {
 			return nil
@@ -39,12 +45,6 @@ func (c Upgrader) Upgrade() error {
 	}
 
 	c.logger.Debug(fmt.Sprintf("Passed preflight test. Upgrading Grafana to %s", targetGrafanaVersion.String()))
-
-	if c.dryRun {
-		c.logger.Info("Simulating upgrade")
-	} else {
-		c.logger.Info("Patching Grafana")
-	}
 
 	err = patchGrafanaDeployment(c.logger, kubectlClient, c.dryRun)
 	if err != nil {
