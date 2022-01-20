@@ -24,7 +24,7 @@ If you want to make sure okctl upgrade doesn't re-run an upgrade that has been r
 
 ## Avoid cross-upgrade imports
 
-Any code in a migration MUST NOT import code from another migration.
+Any code in an upgrade MUST NOT import code from another upgrade.
 
 Upgrading is a complex domain, and to ensure that upgrades stay simple and isolated, they must avoid such imports. If downstream
 migrations depend on an upstream migrations, we might break any of the downstream migrations, which we want to avoid.
@@ -34,12 +34,22 @@ changes to reuse logic doesn't break any of the migrations using the common logi
 
 # How to create an upgrade
 
+This section describes a workflow for developing, testing and releasing an upgrade. 
+
+## Create the upgrade
+
 * `cp -r template <okctl target version>`, where `<okctl target version>` is explained under [Binaries](#binaries).
     * Example: `cp -r template 0.0.60.some-component`
 * Edit the upgrade to your needs (:information_source: Tip: start with `upgrade.go`)
-* Optional: To have a look at the release files before publishing, run `make release-test UPGRADE_VERSION=0.0.65.some-component`,
-  which will create a `dist` directory.
-* To make the actual release, first push the upgrade to the main branch (through a PR, preferrably). Then run the following:
+
+## Test the upgrade
+
+* During development, you can run the upgrade continuously. See [when developing](#when-developing)
+* When you're ready for a "full" end-to-end test, you can make and run a test release. See [using okctl upgrade](#using-okctl-upgrade)
+
+## Release the upgrade 
+
+To make the actual release, first push the upgrade to the main branch (through a PR, preferrably). Then run the following:
 
 ```shell
 TAG="0.0.5+some-component" # GitHub actions will then look for the dir 0.0.5.some-component
@@ -50,32 +60,72 @@ git push --atomic origin main $TAG
 
 GitHub actions takes care of the rest.
 
-## Testing the release
+## There is an error with my upgrade, what do I do
 
-To test a release, you can run the above commands from a branch. Afterwards, you must
+If you after releasing an upgrade discover problems with the upgrade, you can:
 
-* delete the release in GitHub
-* delete tag
+* delete release and the tag corresponding tag in GitHub
+* update the upgrade code, and create a new release as described by the steps above.
 
-```shell
-git tag -d $TAG
-git push --delete origin $TAG
+Note: Update existing released upgrades with care, as some users may have already downloaded and executed them. Also note that upgrades binaries are downloaded and cached when running okctl upgrade.
+
+# Running upgrades
+
+## When developing
+
+Every upgrade must run with the same environment as `okctl show credentials` (which equals `okctl venv`).
+
+So if running through an IDE such as IntelliJ, add environmental variables to be at least those from `okctl show credentials`.
+
+## Using okctl upgrade
+
+The normal way of running upgrades is using `okctl upgrade`, which will calculate which upgrades to run, and then download and run
+them.
+
+`okctl upgrade` fetches upgrades from releases in this repository. To test that an upgrade works before releasing, we can create the release in a mirror repository, [okctl-upgrade-test](https://github.com/oslokommune/okctl-upgrade-test), and point okctl to use that one. 
+
+To do so, in okctl repository [pkg/upgrade/upgrade.go](https://github.com/oslokommune/okctl/blob/master/pkg/upgrade/upgrade.go#L30), set the constant `OkctlUpgradeRepo` so it becomes
+
+```go
+OkctlUpgradeRepo = "okctl-upgrade-test"
 ```
 
-# How to update an upgrade
+Then go to [okctl-upgrade-test](https://github.com/oslokommune/okctl-upgrade-test) repository and create a release for your upgrade.
 
-Update existing released upgrades with care, as some users may have already downloaded and executed them. Also note that upgrades binaries are downloaded and cached when running okctl upgrade.
+Then build and run okctl upgrade, and see that it works as expected.
 
-To update:
-* Do whatever changes you need to the upgrade, and merge it to the main branch (directly or through a PR)
-* Delete the existing release by running the steps under [testing the release](#testing-the-release) above
-* Create a new release by tagging a commit, as described under [How to create an upgrade](#how-to-create-an-upgrade) above.
+## Running manually
 
-# Outputs
+If one for whatever reason want to run an upgrade binary directly, without going via `okctl upgrade`, it can be done by following
+the commands below:
+
+```shell
+# Replace these variables with the appropriate values
+UPGRADE_URL=https://github.com/oslokommune/okctl-upgrade/releases/download/some_upgrade.tar.gz
+CLUSTER_NAME=my-cluster
+IAC_REPO_DIR=~/my-iac-repo
+export OKCTL_CLUSTER_DECLARATION=cluster.yaml
+
+curl --silent --location $UPGRADE_URL | tar xz -C /tmp
+cd $IAC_REPO_DIR
+okctl venv
+
+okctl maintenance state-acquire-lock
+okctl maintenance state-download -p ~/.okctl/localState/$CLUSTER_NAME/state.db
+
+./tmp/file-name-of-upgrade # replace with the name of the upgrade binary 
+
+okctl maintenance state-upload ~/.okctl/localState/$CLUSTER_NAME/state.db
+okctl maintenance state-release-lock
+```
+
+# Implementation details
+
+This section describes inner workings of how Okctl upgrades in the context of this repository work. 
 
 The GitHub release action will produce the outputs described below.
 
-## Binaries
+## Upgrade binaries
 
 This project creates binaries whose file name will follow this naming convention:
 
@@ -118,41 +168,3 @@ Examples:
 Every binary will be put in its own release, and tagged with the `<okctl target version>`.
 
 See https://github.com/oslokommune/okctl-upgrade/releases.
-
-## Running upgrades
-
-### When developing
-
-Every upgrade must run with the same environment as `okctl show credentials` (which equals `okctl venv`).
-
-So if running through an IDE such as IntelliJ, add environmental variables to be at least those from `okctl show credentials`.
-
-### Using okctl upgrade
-
-The normal way of running upgrades is using `okctl upgrade`, which will calculate which upgrades to run, and then download and run
-them.
-
-### Running manually
-
-If one for whatever reason want to run an upgrade binary directly, without going via `okctl upgrade`, it can be done by following
-the commands below:
-
-```shell
-# Replace these variables with the appropriate values
-UPGRADE_URL=https://github.com/oslokommune/okctl-upgrade/releases/download/some_upgrade.tar.gz
-CLUSTER_NAME=my-cluster
-IAC_REPO_DIR=~/my-iac-repo
-export OKCTL_CLUSTER_DECLARATION=cluster.yaml
-
-curl --silent --location $UPGRADE_URL | tar xz -C /tmp
-cd $IAC_REPO_DIR
-okctl venv
-
-okctl maintenance state-acquire-lock
-okctl maintenance state-download -p ~/.okctl/localState/$CLUSTER_NAME/state.db
-
-./tmp/file-name-of-upgrade # replace with the name of the upgrade binary 
-
-okctl maintenance state-upload ~/.okctl/localState/$CLUSTER_NAME/state.db
-okctl maintenance state-release-lock
-```
