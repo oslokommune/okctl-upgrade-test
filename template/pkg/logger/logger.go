@@ -1,6 +1,9 @@
 package logger
 
-import "fmt"
+import (
+	"fmt"
+	"os"
+)
 
 type Level int
 
@@ -10,6 +13,9 @@ const (
 
 	// Info means the system will output default messages
 	Info
+
+	// Error means the system will output error messages
+	Error
 )
 
 type Logger struct {
@@ -22,25 +28,37 @@ func (l Logger) Debug(args ...interface{}) {
 		out = append(out, "[DEBUG]")
 		out = append(out, args...)
 
-		fmt.Println(out...)
+		_, _ = fmt.Println(out...)
 	}
 }
 
 func (l Logger) Debugf(format string, args ...interface{}) {
 	if l.levelIsEnabled(Debug) {
-		fmt.Printf("[DEBUG] "+format, args...)
+		_, _ = fmt.Printf("[DEBUG] "+format, args...)
 	}
 }
 
 func (l Logger) Info(args ...interface{}) {
 	if l.levelIsEnabled(Info) {
-		fmt.Println(args...)
+		_, _ = fmt.Println(args...)
 	}
 }
 
 func (l Logger) Infof(format string, args ...interface{}) {
 	if l.levelIsEnabled(Info) {
-		fmt.Printf(format, args...)
+		_, _ = fmt.Printf(format, args...)
+	}
+}
+
+func (l Logger) Error(args ...interface{}) {
+	if l.levelIsEnabled(Error) {
+		_, _ = fmt.Fprintln(os.Stderr, args...)
+	}
+}
+
+func (l Logger) Errorf(format string, args ...interface{}) {
+	if l.levelIsEnabled(Error) {
+		_, _ = fmt.Fprintf(os.Stderr, format, args...)
 	}
 }
 

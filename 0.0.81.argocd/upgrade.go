@@ -7,8 +7,9 @@ import (
 
 func upgrade(context Context, flags cmdFlags) error {
 	opts := argocdPkg.Opts{
-		DryRun:  flags.dryRun,
-		Confirm: flags.confirm,
+		DryRun:        flags.dryRun,
+		Confirm:       flags.confirm,
+		SkipPreflight: flags.skipPreflight,
 	}
 
 	argocd, err := argocdPkg.New(context.log, opts)

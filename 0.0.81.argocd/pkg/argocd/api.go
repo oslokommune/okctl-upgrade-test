@@ -16,17 +16,21 @@ import (
 	"github.com/oslokommune/okctl/pkg/controller/common/reconciliation"
 	"github.com/oslokommune/okctl/pkg/helm/charts/argocd"
 	"strings"
+	"time"
 )
 
 const (
 	argoCDNamespace      = "argocd"
 	argoCDDeploymentName = "argocd-application-controller"
 	argoCDContainerName  = "application-controller"
+	argoCDIngressName    = "argocd-server"
 
 	argoClientSecretName = "argocd/client_secret" //nolint:gosec
 	argoSecretKeyName    = "argocd/secret_key"    //nolint:gosec
 	argoSecretName       = "argocd-secret"
 	argoPrivateKeyName   = "argocd-privatekey"
+
+	deleteReleaseRetrySeconds = 3
 )
 
 var (
@@ -36,10 +40,11 @@ var (
 
 // ArgoCD is a sample okctl component
 type ArgoCD struct {
-	log     logger.Logger
-	dryRun  bool
-	confirm bool
-	kubectl Kubectl
+	log           logger.Logger
+	dryRun        bool
+	confirm       bool
+	kubectl       Kubectl
+	skipPreflight bool
 }
 
 var errNothingToDo = errors.New("nothing to do")
@@ -48,13 +53,15 @@ var errNothingToDo = errors.New("nothing to do")
 func (a ArgoCD) Upgrade() error {
 	a.log.Info("Upgrading ArgoCD")
 
-	err := a.preflight()
-	if err != nil {
-		if errors.Is(err, errNothingToDo) {
-			return nil
-		}
+	if !a.skipPreflight {
+		err := a.preflight()
+		if err != nil {
+			if errors.Is(err, errNothingToDo) {
+				return nil
+			}
 
-		return fmt.Errorf("running preflight checks: %w", err)
+			return fmt.Errorf("running preflight checks: %w", err)
+		}
 	}
 
 	o, err := initializeOkctl()
@@ -145,6 +152,11 @@ func (a ArgoCD) partiallyRemoveArgoCD(services *core.Services, clusterID api.ID)
 		return fmt.Errorf("deleting helm release: %w", err)
 	}
 
+	err = a.waitForIngressDeletion()
+	if err != nil {
+		return fmt.Errorf("waiting for ingress deletion: %w", err)
+	}
+
 	for _, name := range []string{argoSecretName, argoPrivateKeyName} {
 		a.log.Debugf("Deleting external secret '%s'\n", name)
 		err = services.Manifest.DeleteExternalSecret(context.Background(), client.DeleteExternalSecretOpts{
@@ -167,6 +179,33 @@ func (a ArgoCD) partiallyRemoveArgoCD(services *core.Services, clusterID api.ID)
 		})
 		if err != nil {
 			return fmt.Errorf("deleting secret: %w", err)
+		}
+	}
+
+	return nil
+}
+
+// The ingress takes a while to delete because the AWS ALB takes some time to remove. If we don't wait for it to be removed,
+// the new ingress won't be created.
+func (a ArgoCD) waitForIngressDeletion() error {
+	secondsPassed := 0
+
+	for {
+		hasIngress, err := a.kubectl.hasIngress(argoCDNamespace, argoCDIngressName)
+		if err != nil {
+			return fmt.Errorf("getting ingress existence: %w", err)
+		}
+
+		if hasIngress {
+			if secondsPassed > 90 {
+				return errors.New("exceeded timeout for waiting for deletion of Helm release")
+			}
+
+			a.log.Debugf("Waiting for ArgoCD ingress to disappear")
+			time.Sleep(deleteReleaseRetrySeconds * time.Second)
+			secondsPassed += deleteReleaseRetrySeconds
+		} else {
+			break
 		}
 	}
 
@@ -248,12 +287,27 @@ func (a ArgoCD) postflight() error {
 		return fmt.Errorf("validating new version: %w", err)
 	}
 
+	hasIngress, err := a.kubectl.hasIngress(argoCDNamespace, argoCDIngressName)
+	if err != nil {
+		return fmt.Errorf("getting ingress existense: %w", err)
+	}
+
+	if !hasIngress {
+		a.log.Error(`There was an error while upgrading ArgoCD. Contact support to fix the issue.
+
+Technical details: After creating the ArgoCD Helm chart, the ingress was for some reason not created. ArgoCD should be working,
+but it is not possible to access from Internet.
+`)
+		return fmt.Errorf("expected ArgoCD ingress to be present, but it was not")
+	}
+
 	return nil
 }
 
 type Opts struct {
-	DryRun  bool
-	Confirm bool
+	DryRun        bool
+	Confirm       bool
+	SkipPreflight bool
 }
 
 func New(log logger.Logger, opts Opts) (ArgoCD, error) {
@@ -263,9 +317,10 @@ func New(log logger.Logger, opts Opts) (ArgoCD, error) {
 	}
 
 	return ArgoCD{
-		log:     log,
-		dryRun:  opts.DryRun,
-		confirm: opts.Confirm,
-		kubectl: kubectl,
+		log:           log,
+		dryRun:        opts.DryRun,
+		confirm:       opts.Confirm,
+		kubectl:       kubectl,
+		skipPreflight: opts.SkipPreflight,
 	}, nil
 }

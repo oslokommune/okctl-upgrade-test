@@ -26,9 +26,10 @@ func main() {
 }
 
 type cmdFlags struct {
-	debug   bool
-	dryRun  bool
-	confirm bool
+	debug         bool
+	dryRun        bool
+	confirm       bool
+	skipPreflight bool
 }
 
 func buildRootCommand() *cobra.Command {
@@ -68,6 +69,10 @@ func buildRootCommand() *cobra.Command {
 	cmd.PersistentFlags().BoolVarP(&flags.debug, "debug", "d", false, "Set this to enable debug output.")
 	cmd.PersistentFlags().BoolVarP(&flags.dryRun, "dry-run", "n", true, "Don't actually do any changes, just show what would be done.")
 	cmd.PersistentFlags().BoolVarP(&flags.confirm, "confirm", "c", false, "Set this to skip confirmation prompts.")
+
+	// In case something wrong happens with the upgrade, we want to be able to run it again.
+	cmd.PersistentFlags().BoolVarP(&flags.skipPreflight, "skip-preflight-checks", "s", false,
+		"Set this to true to skip preflight checks, i. e. run upgrade regardless of current state.")
 
 	return cmd
 }
