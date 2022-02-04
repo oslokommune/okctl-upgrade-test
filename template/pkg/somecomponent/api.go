@@ -3,25 +3,27 @@ package somecomponent
 import (
 	"fmt"
 	"github.com/AlecAivazis/survey/v2"
-	"github.com/oslokommune/okctl-upgrade/template/pkg/commonerrors"
-	"github.com/oslokommune/okctl-upgrade/template/pkg/logger"
+	"github.com/oslokommune/okctl-upgrade/template/pkg/lib/cmdflags"
+	"github.com/oslokommune/okctl-upgrade/template/pkg/lib/commonerrors"
+	"github.com/oslokommune/okctl-upgrade/template/pkg/lib/logger"
 )
 
 // SomeComponent is a sample okctl component
 type SomeComponent struct {
-	logger  logger.Logger
+	flags   cmdflags.Flags
+	log     logger.Logger
 	dryRun  bool
 	confirm bool
 }
 
 // Upgrade upgrades the component
 func (c SomeComponent) Upgrade() error {
-	c.logger.Info("Upgrading SomeComponent")
+	c.log.Info("Upgrading SomeComponent")
 
-	c.logger.Debug("SomeComponent is on version 0.5. Updating to 0.6")
+	c.log.Debug("SomeComponent is on version 0.5. Updating to 0.6")
 
 	if !c.dryRun && !c.confirm {
-		c.logger.Info("This will delete all logs.")
+		c.log.Info("This will delete all logs.")
 
 		answer, err := c.askUser("Do you want to continue?")
 		if err != nil {
@@ -34,12 +36,12 @@ func (c SomeComponent) Upgrade() error {
 	}
 
 	if c.dryRun {
-		c.logger.Info("Simulating some stuff")
+		c.log.Info("Simulating some stuff")
 	} else {
-		c.logger.Info("Doing some stuff")
+		c.log.Info("Doing some stuff")
 	}
 
-	c.logger.Info("Upgrading SomeComponent done!")
+	c.log.Info("Upgrading SomeComponent done!")
 
 	return nil
 }
@@ -65,7 +67,7 @@ type Opts struct {
 
 func New(logger logger.Logger, opts Opts) SomeComponent {
 	return SomeComponent{
-		logger:  logger,
+		log:     logger,
 		dryRun:  opts.DryRun,
 		confirm: opts.Confirm,
 	}

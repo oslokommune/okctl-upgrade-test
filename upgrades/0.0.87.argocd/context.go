@@ -1,12 +1,12 @@
 package main
 
 import (
-	"github.com/oslokommune/okctl-upgrade/template/pkg/lib/cmdflags"
-	"github.com/oslokommune/okctl-upgrade/template/pkg/lib/logger"
+	"github.com/oslokommune/okctl-upgrade/upgrades/0.0.87.argocd/pkg/lib/cmdflags"
+	"github.com/oslokommune/okctl-upgrade/upgrades/0.0.87.argocd/pkg/lib/logger"
 )
 
 type Context struct {
-	logger logger.Logger
+	log logger.Logger
 }
 
 func newContext(flags cmdflags.Flags) Context {
@@ -18,6 +18,6 @@ func newContext(flags cmdflags.Flags) Context {
 	}
 
 	return Context{
-		logger: logger.New(level),
+		log: logger.New(level),
 	}
 }

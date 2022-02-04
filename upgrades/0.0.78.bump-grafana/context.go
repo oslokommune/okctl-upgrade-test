@@ -1,17 +1,16 @@
 package main
 
 import (
-	"github.com/oslokommune/okctl-upgrade/template/pkg/lib/cmdflags"
-	"github.com/oslokommune/okctl-upgrade/template/pkg/lib/logger"
+	"github.com/oslokommune/okctl-upgrade/upgrades/0.0.78.bump-grafana/pkg/logger"
 )
 
 type Context struct {
 	logger logger.Logger
 }
 
-func newContext(flags cmdflags.Flags) Context {
+func newContext(flags cmdFlags) Context {
 	var level logger.Level
-	if flags.Debug {
+	if flags.debug {
 		level = logger.Debug
 	} else {
 		level = logger.Info
