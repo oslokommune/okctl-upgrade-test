@@ -45,8 +45,8 @@ jobs:
         with:
           distribution: goreleaser
           version: latest
-          args: release --config ../.goreleaser.yaml --rm-dist
-          workdir: ${{ steps.getUpgradeVersion.outputs.result  }}
+          args: release --config ../../.goreleaser.yaml --rm-dist
+          workdir: upgrades/${{ steps.getUpgradeVersion.outputs.result  }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           UPGRADE_VERSION: ${{ steps.getUpgradeVersion.outputs.result }}
