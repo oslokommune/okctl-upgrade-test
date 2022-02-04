@@ -39,6 +39,8 @@ jobs:
           UPGRADE_VERSION: ${{ steps.getUpgradeVersion.outputs.result }}
         run: |
           echo Upgrade version is set to: $UPGRADE_VERSION
+          echo Listing upgrades directory
+          ls -lr upgrades
 
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2
