@@ -3,9 +3,9 @@ package grafana
 import (
 	"fmt"
 	"github.com/AlecAivazis/survey/v2"
-	"github.com/oslokommune/okctl-upgrade/0.0.78.bump-grafana/pkg/commonerrors"
+	"github.com/oslokommune/okctl-upgrade/upgrades/0.0.78.bump-grafana/pkg/commonerrors"
 
-	"github.com/oslokommune/okctl-upgrade/0.0.78.bump-grafana/pkg/logger"
+	"github.com/oslokommune/okctl-upgrade/upgrades/0.0.78.bump-grafana/pkg/logger"
 	"k8s.io/client-go/kubernetes"
 
 	"github.com/Masterminds/semver"

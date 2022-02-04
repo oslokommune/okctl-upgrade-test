@@ -1,6 +1,6 @@
 package main
 
-import "github.com/oslokommune/okctl-upgrade/0.0.78.bump-grafana/pkg/grafana"
+import "github.com/oslokommune/okctl-upgrade/upgrades/0.0.78.bump-grafana/pkg/grafana"
 
 func upgrade(context Context, flags cmdFlags) error {
 	opts := grafana.Opts{
