@@ -5,12 +5,13 @@ import (
 	"errors"
 	"fmt"
 	"github.com/Masterminds/semver"
+	"k8s.io/api/networking/v1"
 	"os"
 	"strings"
 
 	"k8s.io/client-go/tools/clientcmd"
 
-	"github.com/oslokommune/okctl-upgrade/0.0.81.argocd/pkg/logger"
+	"github.com/oslokommune/okctl-upgrade/0.0.87.argocd/pkg/lib/logger"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 )
@@ -83,6 +84,24 @@ func (k Kubectl) getContainerIndexByName(namespace, deployment, container string
 	}
 
 	return -1, fmt.Errorf("not found")
+}
+
+func (k Kubectl) getIngress(namespace, ingress string) (*v1.Ingress, error) {
+	i, err := k.clientSet.NetworkingV1().Ingresses(namespace).Get(context.Background(), ingress, metav1.GetOptions{})
+	if err != nil {
+		return nil, fmt.Errorf("getting ingress (namespace: %s, ingress: %s): %w", namespace, ingress, err)
+	}
+
+	return i, nil
+}
+
+func (k Kubectl) hasIngress(namespace, ingress string) (bool, error) {
+	_, err := k.getIngress(namespace, ingress)
+	if err != nil {
+		return false, nil
+	}
+
+	return true, nil
 }
 
 func int64Ptr(i int64) *int64 {

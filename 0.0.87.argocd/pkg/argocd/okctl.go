@@ -1,9 +1,11 @@
 package argocd
 
 import (
+	"context"
 	"fmt"
 	"github.com/oslokommune/okctl/cmd/okctl/hooks"
 	"github.com/oslokommune/okctl/pkg/api"
+	"github.com/oslokommune/okctl/pkg/client"
 	"github.com/oslokommune/okctl/pkg/config/constant"
 	"github.com/oslokommune/okctl/pkg/okctl"
 	"github.com/spf13/cobra"
@@ -103,4 +105,28 @@ func getClusterID(o *okctl.Okctl) api.ID {
 		AWSAccountID: o.Declaration.Metadata.AccountID,
 		ClusterName:  o.Declaration.Metadata.Name,
 	}
+}
+
+func getHelmRelease(o *okctl.Okctl, releaseName, namespace string) (*client.Helm, error) {
+	state := o.StateHandlers(o.StateNodes())
+
+	services, err := o.ClientServices(state)
+	if err != nil {
+		return nil, err
+	}
+
+	release, err := services.Helm.GetHelmRelease(context.Background(), client.GetHelmReleaseOpts{
+		ClusterID:   getClusterID(o),
+		ReleaseName: releaseName,
+		Namespace:   namespace,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return release, nil
+}
+
+func getHelmReleaseAppVersion(release *client.Helm) string {
+	return release.Release.Chart.Metadata.AppVersion
 }

@@ -57,10 +57,21 @@ if [[ ! $(git diff "origin/$FEATURE_BRANCH" --numstat | wc -l) -eq 0 ]]; then
   exit 1
 fi
 
-export UPGRADE_VERSION=${TAG/\+/.}
-TEST_REPO_DIR="/tmp/$TEST_REPO_NAME"
+if [[ $(git rev-parse HEAD) != $(git rev-parse "origin/$FEATURE_BRANCH") ]]; then
+  echo "git rev-parse HEAD doesn't match git rev-parse origin/$FEATURE_BRANCH, consider git push or git push -f"
+  exit 1
+fi
 
+export UPGRADE_VERSION=${TAG/\+/.}
 echo "UPGRADE_VERSION: $UPGRADE_VERSION"
+
+if [[ ! -d "$UPGRADE_VERSION" ]]; then
+  echo "Could not find directory: $UPGRADE_VERSION"
+  exit 1
+fi
+
+
+TEST_REPO_DIR="/tmp/$TEST_REPO_NAME"
 
 if [[ -d "$TEST_REPO_DIR" ]]; then
   rm -rf $TEST_REPO_DIR
@@ -124,8 +135,11 @@ git commit -m "Don't release on push, we're doing it locally"
 
 git tag -s "$TAG" -m "Upgrade $TAG"
 
+echo "----------------------------------------------------------------------------"
+
 echo
-echo Pushing tag...
+echo Pushing tag: $TAG
+echo
 git push --atomic origin "$TAG"
 
 
@@ -136,8 +150,6 @@ echo
 goreleaser release \
   --config ../.goreleaser.yaml \
   --rm-dist
-
-rm -rf "$TEST_REPO_DIR"
 
 echo "----------------------------------------------------------------------------"
 echo

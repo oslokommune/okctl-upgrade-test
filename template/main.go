@@ -3,7 +3,8 @@ package main
 import (
 	"errors"
 	"fmt"
-	"github.com/oslokommune/okctl-upgrade/template/pkg/commonerrors"
+	"github.com/oslokommune/okctl-upgrade/template/pkg/lib/cmdflags"
+	"github.com/oslokommune/okctl-upgrade/template/pkg/lib/commonerrors"
 	"github.com/spf13/cobra"
 	"os"
 	"path/filepath"
@@ -25,14 +26,8 @@ func main() {
 	}
 }
 
-type cmdFlags struct {
-	debug   bool
-	dryRun  bool
-	confirm bool
-}
-
 func buildRootCommand() *cobra.Command {
-	flags := cmdFlags{}
+	flags := cmdflags.Flags{}
 
 	var context Context
 
@@ -65,9 +60,9 @@ func buildRootCommand() *cobra.Command {
 	 *
 	 * --confirm:	Skips all confirmation prompts, if any.
 	 */
-	cmd.PersistentFlags().BoolVarP(&flags.debug, "debug", "d", false, "Set this to enable debug output.")
-	cmd.PersistentFlags().BoolVarP(&flags.dryRun, "dry-run", "n", true, "Don't actually do any changes, just show what would be done.")
-	cmd.PersistentFlags().BoolVarP(&flags.confirm, "confirm", "c", false, "Set this to skip confirmation prompts.")
+	cmd.PersistentFlags().BoolVarP(&flags.Debug, "debug", "d", false, "Set this to enable debug output.")
+	cmd.PersistentFlags().BoolVarP(&flags.DryRun, "dry-run", "n", true, "Don't actually do any changes, just show what would be done.")
+	cmd.PersistentFlags().BoolVarP(&flags.Confirm, "confirm", "c", false, "Set this to skip confirmation prompts.")
 
 	return cmd
 }
