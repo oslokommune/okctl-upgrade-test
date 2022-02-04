@@ -52,6 +52,12 @@ fi
 FEATURE_BRANCH=$(git branch --show-current)
 
 git fetch
+
+if [[ $(git ls-remote --heads origin "$FEATURE_BRANCH" | wc -l) -eq 0 ]]; then
+  echo "Your branch has not been pushed. Push before continuing."
+  exit 1
+fi
+
 if [[ ! $(git diff "origin/$FEATURE_BRANCH" --numstat | wc -l) -eq 0 ]]; then
   echo "You have unpushed commits. Push before continuing."
   exit 1
@@ -65,16 +71,18 @@ fi
 export UPGRADE_VERSION=${TAG/\+/.}
 echo "UPGRADE_VERSION: $UPGRADE_VERSION"
 
-if [[ ! -d "$UPGRADE_VERSION" ]]; then
+UPGRADE_RELATIVE_DIR="upgrades/$UPGRADE_VERSION"
+
+if [[ ! -d "$UPGRADE_RELATIVE_DIR" ]]; then
   echo "Could not find directory: $UPGRADE_VERSION"
   exit 1
 fi
 
 
-TEST_REPO_DIR="/tmp/$TEST_REPO_NAME"
+TEST_REPO_ABSOLUTE_DIR="/tmp/$TEST_REPO_NAME"
 
-if [[ -d "$TEST_REPO_DIR" ]]; then
-  rm -rf $TEST_REPO_DIR
+if [[ -d "$TEST_REPO_ABSOLUTE_DIR" ]]; then
+  rm -rf $TEST_REPO_ABSOLUTE_DIR
 fi
 
 echo "----------------------------------------------------------------------------"
@@ -82,8 +90,8 @@ echo
 echo "Preparing $TEST_REPO_FULL_NAME repository..."
 echo
 
-git clone "git@github.com:$TEST_REPO_FULL_NAME.git" $TEST_REPO_DIR
-cd "$TEST_REPO_DIR"
+git clone "git@github.com:$TEST_REPO_FULL_NAME.git" $TEST_REPO_ABSOLUTE_DIR
+cd "$TEST_REPO_ABSOLUTE_DIR"
 
 git remote add okctl-upgrade git@github.com:oslokommune/okctl-upgrade.git
 git fetch okctl-upgrade
@@ -97,7 +105,7 @@ echo
 (git push --delete origin "$TAG" 2>/dev/null) || true
 
 # shellcheck disable=SC2164
-cd "$TEST_REPO_DIR/$UPGRADE_VERSION"
+cd "$TEST_REPO_ABSOLUTE_DIR/$UPGRADE_RELATIVE_DIR"
 
 echo "----------------------------------------------------------------------------"
 echo
@@ -126,7 +134,7 @@ echo "--------------------------------------------------------------------------
 echo
 echo Disabling release workflow for this branch...
 echo
-RELEASE_FILE="$TEST_REPO_DIR/.github/workflows/release.yml"
+RELEASE_FILE="$TEST_REPO_ABSOLUTE_DIR/.github/workflows/release.yml"
 
 git checkout "$FEATURE_BRANCH"
 rm "$RELEASE_FILE"
@@ -138,17 +146,16 @@ git tag -s "$TAG" -m "Upgrade $TAG"
 echo "----------------------------------------------------------------------------"
 
 echo
-echo Pushing tag: $TAG
+echo "Pushing tag: $TAG"
 echo
 git push --atomic origin "$TAG"
-
 
 echo "----------------------------------------------------------------------------"
 echo
 echo "Creating release... Running from dir: $(pwd)"
 echo
 goreleaser release \
-  --config ../.goreleaser.yaml \
+  --config ../../.goreleaser.yaml \
   --rm-dist
 
 echo "----------------------------------------------------------------------------"
