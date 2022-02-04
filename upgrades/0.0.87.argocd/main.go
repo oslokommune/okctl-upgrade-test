@@ -3,8 +3,8 @@ package main
 import (
 	"errors"
 	"fmt"
-	"github.com/oslokommune/okctl-upgrade/0.0.87.argocd/pkg/lib/cmdflags"
-	"github.com/oslokommune/okctl-upgrade/0.0.87.argocd/pkg/lib/commonerrors"
+	"github.com/oslokommune/okctl-upgrade/upgrades/0.0.87.argocd/pkg/lib/cmdflags"
+	"github.com/oslokommune/okctl-upgrade/upgrades/0.0.87.argocd/pkg/lib/commonerrors"
 	"github.com/spf13/cobra"
 	"os"
 	"path/filepath"
