@@ -1,4 +1,4 @@
-module github.com/oslokommune/okctl-upgrade/0.0.87.argocd
+module github.com/oslokommune/okctl-upgrade/upgrades/0.0.87.argocd
 
 go 1.16
 
