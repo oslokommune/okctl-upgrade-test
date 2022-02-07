@@ -60,11 +60,6 @@ func (c SomeComponent) askUser(question string) (bool, error) {
 	return answer, nil
 }
 
-type Opts struct {
-	DryRun  bool
-	Confirm bool
-}
-
 func New(logger logger.Logger, flags cmdflags.Flags) SomeComponent {
 	return SomeComponent{
 		log:     logger,
