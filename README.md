@@ -91,7 +91,7 @@ To do so, follow the following steps.
 In this repository, run
 
 ```shell
-./test-release.sh TAG 
+./test-release TAG 
 ```
 
 where TAG is the tag you want to release with. See [release the upgrade](#release-the-upgrade) for details.
@@ -99,7 +99,7 @@ where TAG is the tag you want to release with. See [release the upgrade](#releas
 Example
 
 ```shell
-./test-release.sh 0.0.80+some-component 
+./test-release 0.0.80+some-component 
 ```
 
 ### Run the test upgrade
