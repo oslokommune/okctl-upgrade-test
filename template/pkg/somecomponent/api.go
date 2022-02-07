@@ -65,10 +65,10 @@ type Opts struct {
 	Confirm bool
 }
 
-func New(logger logger.Logger, opts Opts) SomeComponent {
+func New(logger logger.Logger, flags cmdflags.Flags) SomeComponent {
 	return SomeComponent{
 		log:     logger,
-		dryRun:  opts.DryRun,
-		confirm: opts.Confirm,
+		dryRun:  flags.DryRun,
+		confirm: flags.Confirm,
 	}
 }
