@@ -1,0 +1,36 @@
+#!/usr/bin/bash
+
+## Prints out usage information
+printUsage() {
+	echo "Scaffolds a new upgrade"
+
+	echo "Usage  : ./scaffold-upgrade <name of upgrade>"
+	echo "Example: ./scaffold-upgrade 0.0.88.argocd-app-sync"
+}
+
+upgradeName=$1
+
+if [[ "$1" == "" ]]; then
+	printUsage
+
+	exit 1
+fi
+
+upgradeDir=upgrades
+targetDir=${upgradeDir}/${upgradeName}
+
+## Copy template to new upgrade
+cp -r template ${targetDir}
+
+## Substitute all template module references with new upgrade name
+original=okctl-upgrade/template
+substitute=okctl-upgrade/${targetDir}
+
+os=`uname`
+if [[ "${os}" == "Linux" ]]; then
+	find ./${targetDir} -type f -exec sed -i "s~${original}~${substitute}~" "{}" +;
+elif [[ "${os}" == "Darwin" ]]; then
+	find ./${targetDir} -type f -exec sed -i '' -e "s~${original}~${substitute}~" "{}" +;
+else
+	echo "scaffold-upgrade does not support the operating system ${os}"
+fi
