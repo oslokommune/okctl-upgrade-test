@@ -314,6 +314,7 @@ func (a ArgoCD) postflight() error {
 	return nil
 }
 
+// New creates an upgrader for ArgoCD
 func New(log logger.Logger, flags cmdflags.Flags) (ArgoCD, error) {
 	kubectl, err := newKubectl(log)
 	if err != nil {
