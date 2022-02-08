@@ -3,6 +3,9 @@ module github.com/oslokommune/okctl-upgrade/upgrades/0.0.89.rotate-argocd-ssh-ke
 go 1.16
 
 require (
-	github.com/oslokommune/okctl v0.0.88-0.20220207135528-646363d27513
+	github.com/google/go-github/v32 v32.1.0
+	github.com/oslokommune/okctl v0.0.88-0.20220211072441-2921691bdf92
 	github.com/spf13/cobra v1.3.0
+	golang.org/x/oauth2 v0.0.0-20211104180415-d3ed0bb246c8
+	sigs.k8s.io/yaml v1.3.0
 )

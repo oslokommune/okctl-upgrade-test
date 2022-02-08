@@ -1,4 +1,4 @@
-package okctlimport
+package okctlinit
 
 import (
 	"fmt"
