@@ -72,6 +72,16 @@ func (g *Github) ListDeployKey(org, repository string) ([]*Key, error) {
 	return allKeys, nil
 }
 
+// DeleteDeployKey removes a read-only deploy key
+func (g *Github) DeleteDeployKey(org, repository string, identifier int64) error {
+	_, err := g.Client.Repositories.DeleteKey(g.Ctx, org, repository, identifier)
+	if err != nil {
+		return fmt.Errorf("deleting deploy key: %w", err)
+	}
+
+	return nil
+}
+
 // Ensure that Github implements Githuber
 var _ Githuber = &Github{}
 
@@ -99,14 +109,4 @@ func New(ctx context.Context, auth githubAuth.Authenticator) (*Github, error) {
 		Ctx:    ctx,
 		Client: client,
 	}, nil
-}
-
-// DeleteDeployKey removes a read-only deploy key
-func (g *Github) DeleteDeployKey(org, repository string, identifier int64) error {
-	_, err := g.Client.Repositories.DeleteKey(g.Ctx, org, repository, identifier)
-	if err != nil {
-		return fmt.Errorf("deleting deploy key: %w", err)
-	}
-
-	return nil
 }

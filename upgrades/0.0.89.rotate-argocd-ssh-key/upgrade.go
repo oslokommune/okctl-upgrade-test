@@ -7,12 +7,12 @@ import (
 )
 
 func upgrade(context Context, flags cmdflags.Flags) error {
-	c, err := rotatesshkey.New(context.logger, flags)
+	rotater, err := rotatesshkey.New(context.logger, flags)
 	if err != nil {
 		return fmt.Errorf("creating rotater: %w", err)
 	}
 
-	err = c.Upgrade()
+	err = rotater.Upgrade()
 	if err != nil {
 		return err
 	}
