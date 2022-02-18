@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/oslokommune/okctl-upgrade/upgrades/0.0.89.rotate-argocd-ssh-key/pkg/cmdflags"
-	"github.com/oslokommune/okctl-upgrade/upgrades/0.0.89.rotate-argocd-ssh-key/pkg/logger"
+	"github.com/oslokommune/okctl-upgrade/upgrades/0.0.92.rotate-argocd-ssh-key/pkg/cmdflags"
+	"github.com/oslokommune/okctl-upgrade/upgrades/0.0.92.rotate-argocd-ssh-key/pkg/logger"
 )
 
 type Context struct {

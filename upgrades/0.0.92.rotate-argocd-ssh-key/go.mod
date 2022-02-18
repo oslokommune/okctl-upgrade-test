@@ -1,4 +1,4 @@
-module github.com/oslokommune/okctl-upgrade/upgrades/0.0.89.rotate-argocd-ssh-key
+module github.com/oslokommune/okctl-upgrade/upgrades/0.0.92.rotate-argocd-ssh-key
 
 go 1.16
 
