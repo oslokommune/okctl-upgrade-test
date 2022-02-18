@@ -1015,8 +1015,6 @@ github.com/miekg/dns v1.1.43/go.mod h1:+evo5L0630/F6ca/Z9+GAqzhjGyn8/c+TBaOyfEl0
 github.com/miekg/dns v1.1.45 h1:g5fRIhm9nx7g8osrAvgb16QJfmyMsyOCb+J7LSv+Qzk=
 github.com/miekg/dns v1.1.45/go.mod h1:e3IlAVfNqAllflbibAZEWOXOQ+Ynzk/dDozDxY7XnME=
 github.com/miekg/pkcs11 v1.0.3/go.mod h1:XsNlhZGX73bx86s2hdc/FuaLm2CPZJemRLMA+WTFxgs=
-github.com/mikesmitty/edkey v0.0.0-20170222072505-3356ea4e686a h1:eU8j/ClY2Ty3qdHnn0TyW3ivFoPC/0F1gQZz8yTxbbE=
-github.com/mikesmitty/edkey v0.0.0-20170222072505-3356ea4e686a/go.mod h1:v8eSC2SMp9/7FTKUncp7fH9IwPfw+ysMObcEz5FWheQ=
 github.com/minio/highwayhash v1.0.1/go.mod h1:BQskDq+xkJ12lmlUUi7U0M5Swg3EWR+dLTk+kldvVxY=
 github.com/minio/highwayhash v1.0.2/go.mod h1:BQskDq+xkJ12lmlUUi7U0M5Swg3EWR+dLTk+kldvVxY=
 github.com/mishudark/errors v0.0.0-20210318113247-bd4e9ef2fc74 h1:K81WbBbvpUDBN+coctEIX7LdOBtYShJ3vAlj94P1F9A=
@@ -1164,8 +1162,8 @@ github.com/opentracing/opentracing-go v1.2.0/go.mod h1:GxEUsuufX4nBwe+T+Wl9TAgYr
 github.com/openzipkin/zipkin-go v0.2.5/go.mod h1:KpXfKdgRDnnhsxw4pNIH9Md5lyFqKUa4YDFlwRYAMyE=
 github.com/ory/dockertest v3.3.5+incompatible h1:iLLK6SQwIhcbrG783Dghaaa3WPzGc+4Emza6EbVUUGA=
 github.com/ory/dockertest v3.3.5+incompatible/go.mod h1:1vX4m9wsvi00u5bseYwXaSnhNrne+V0E6LAcBILJdPs=
-github.com/oslokommune/okctl v0.0.88-0.20220211072441-2921691bdf92 h1:gI3ULB8uoV22JbmuGxbspTMwauCVDc2hUHokT+Ovfvk=
-github.com/oslokommune/okctl v0.0.88-0.20220211072441-2921691bdf92/go.mod h1:8tfogrZuLuMe+Rs8U5amGMV8E+lkQGqN+UCv9FA7z8w=
+github.com/oslokommune/okctl v0.0.92-0.20220218155830-b6a303025497 h1:Hptbvy3Ar7T4blCvkgroJBwEFVoApcX8i2rS39clUuw=
+github.com/oslokommune/okctl v0.0.92-0.20220218155830-b6a303025497/go.mod h1:Ie1K/o5lGqMpc6EFEObfJReVWAai0FtHcyh6qDbDnsQ=
 github.com/oslokommune/okctl-metrics-service v0.1.8 h1:9zwtBD6p91FZqkk386k0rm1jGQF4rRw7qn6pm4ecnss=
 github.com/oslokommune/okctl-metrics-service v0.1.8/go.mod h1:yDjdZUm2AzQw/dQDhzcdCbm9KSoOq6NSdUXbOabFUmQ=
 github.com/pascaldekloe/goe v0.0.0-20180627143212-57f6aae5913c/go.mod h1:lzWF7FIEvWOWxwDKqyGYQf6ZUaNfKdP144TG7ZOy1lc=

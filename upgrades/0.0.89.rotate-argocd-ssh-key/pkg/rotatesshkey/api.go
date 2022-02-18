@@ -13,7 +13,7 @@ import (
 	awsProvider "github.com/oslokommune/okctl/pkg/api/core/cloudprovider/aws"
 	"github.com/oslokommune/okctl/pkg/apis/okctl.io/v1alpha1"
 	"github.com/oslokommune/okctl/pkg/client"
-	clientDirectAPI "github.com/oslokommune/okctl/pkg/client/core/api/direct"
+	clientCore "github.com/oslokommune/okctl/pkg/client/core"
 	"github.com/oslokommune/okctl/pkg/config/constant"
 	"github.com/oslokommune/okctl/pkg/github"
 )
@@ -28,7 +28,7 @@ type SSHKeyRotater struct {
 	parameterService      api.ParameterService
 	githubDeployKeyGetter *upgradeGithub.Github
 	githubClient          *github.Github
-	githubAPI             client.GithubAPI
+	githubService         client.GithubService
 }
 
 // Upgrade upgrades the component
@@ -103,7 +103,7 @@ func (r SSHKeyRotater) createDeployKey() error {
 		return nil
 	}
 
-	deployKey, err := r.githubAPI.CreateRepositoryDeployKey(client.CreateGithubDeployKeyOpts{
+	deployKey, err := r.githubService.CreateRepositoryDeployKey(client.CreateGithubDeployKeyOpts{
 		ID:           r.clusterID,
 		Organisation: r.declaration.Github.Organisation,
 		Repository:   r.declaration.Github.Repository,
@@ -143,23 +143,24 @@ func New(logger logger.Logger, flags cmdflags.Flags) (SSHKeyRotater, error) {
 
 	state := o.StateHandlers(o.StateNodes())
 
-	parameterService := core.NewParameterService(
-		awsProvider.NewParameterCloudProvider(o.CloudProvider),
-	)
-
 	githubDeployKeyGetter, err := upgradeGithub.New(context.Background(), o.CredentialsProvider.Github())
 	if err != nil {
 		return SSHKeyRotater{}, fmt.Errorf("creating github deploy key client: %w", err)
 	}
+
+	parameterService := core.NewParameterService(
+		awsProvider.NewParameterCloudProvider(o.CloudProvider),
+	)
 
 	githubClient, err := github.New(context.Background(), o.CredentialsProvider.Github())
 	if err != nil {
 		return SSHKeyRotater{}, fmt.Errorf("creating github client: %w", err)
 	}
 
-	githubAPI := clientDirectAPI.NewGithubAPI(
+	githubService := clientCore.NewGithubService(
 		parameterService,
-		githubClient,
+		*githubClient,
+		state.Github,
 	)
 
 	return SSHKeyRotater{
@@ -171,6 +172,6 @@ func New(logger logger.Logger, flags cmdflags.Flags) (SSHKeyRotater, error) {
 		parameterService:      parameterService,
 		githubDeployKeyGetter: githubDeployKeyGetter,
 		githubClient:          githubClient,
-		githubAPI:             githubAPI,
+		githubService:         githubService,
 	}, nil
 }
