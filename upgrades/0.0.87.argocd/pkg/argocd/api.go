@@ -32,8 +32,7 @@ const (
 	deleteReleaseRetrySeconds            = 3
 	waitForIngressDeletionTimeoutSeconds = 8 * 60
 
-	appVersionBeforeUpgrade = "v1.6.2"
-	appVersionAfterUpgrade  = "v2.1.7"
+	appVersionAfterUpgrade = "v2.1.7"
 )
 
 // ArgoCD is a sample okctl component
@@ -102,13 +101,25 @@ func (a ArgoCD) preflight() error {
 	}
 
 	currentVersion := getHelmReleaseAppVersion(release)
-	if currentVersion != appVersionBeforeUpgrade {
+	appVersionsToUpgrade := []string{"1.6.2", "v1.6.2"}
+
+	if !arrayContains(appVersionsToUpgrade, currentVersion) {
 		a.log.Infof("Current chart version is %s. This upgrade only targets chart version %s. Ignoring upgrade.\n",
-			currentVersion, appVersionBeforeUpgrade)
+			currentVersion, strings.Join(appVersionsToUpgrade, ", "))
 		return errNothingToDo
 	}
 
 	return nil
+}
+
+func arrayContains(arr []string, toFind string) bool {
+	for _, arrItem := range arr {
+		if arrItem == toFind {
+			return true
+		}
+	}
+
+	return false
 }
 
 func (a ArgoCD) partiallyRemoveArgoCD() error {
