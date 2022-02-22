@@ -7,14 +7,25 @@ before:
 
 # Configuration: https://goreleaser.com/customization/build/
 builds:
-  - env:
-      - CGO_ENABLED=0
+  - id: linux
+    binary: "okctl-upgrade_{{ .Env.UPGRADE_VERSION }}"
+    env:
+      - CGO_ENABLED=1
     goos:
       - linux
+    goarch:
+      - amd64
+  - id: darwin
+    binary: "okctl-upgrade_{{ .Env.UPGRADE_VERSION }}"
+    env:
+      - CGO_ENABLED=1
+      - CC=o64-clang
+      - CXX=o64-clang++
+    goos:
       - darwin
     goarch:
       - amd64
-    binary: "okctl-upgrade_{{ .Env.UPGRADE_VERSION }}"
+
 
 project_name: okctl-upgrade
 
