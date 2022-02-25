@@ -38,15 +38,17 @@ This section describes a workflow for developing, testing and releasing an upgra
 
 ## Create the upgrade
 
-* `cp -r template <okctl target version>`, where `<okctl target version>` is explained under [Upgrade binaries](#upgrade-binaries).
-    * Example: `cp -r template 0.0.60.some-component`
+* `./scaffold-upgrade <okctl target version>`, where `<okctl target version>` is explained under [Upgrade binaries](#upgrade-binaries).
+    * Example: `./scaffold-upgrade 0.0.60.some-component`
 * Edit the upgrade to your needs (:information_source: Tip: start with `upgrade.go`)
 
 ## Test the upgrade
 
 ### Test continuously while developing
 
-You need two things for running the upgrade directly (i.e. not using `okctl upgrade`).
+#### Requirements
+
+You need some things for running the upgrade directly (i.e. not using `okctl upgrade`).
 
 * Environment variables
 
@@ -54,7 +56,10 @@ Every upgrade must run with the same environment as `okctl show credentials` (wh
 
 So if running through an IDE such as IntelliJ, add environmental variables to be at least those from `okctl show credentials`.
 
-* Okctl state
+* Okctl state - in some cases
+
+If your upgrade depends on importing okctl as a library to call `o.Initialize()`, then you also need to download the cluster
+state:
 
 ```shell
 okctl venv -c cluster.yaml
@@ -64,17 +69,21 @@ okctl maintenance state-acquire-lock # Optional
 okctl maintenance state-download -p ~/.okctl/localState/CLUSTER_NAME/state.db
 ```
 
+#### Run
+
 Now you can run the upgrade.
 
-Then upload the state:
+```shell
+./upgrades/x.y.z-my-upgrade/x.y.z-my-upgrade
+```
+
+Then upload the state (if the upgrade has modified it):
 
 ```shell
 # Replace CLUSTER_NAME with cluster name (found in cluster.yaml)
 okctl maintenance state-download -p ~/.okctl/localState/CLUSTER_NAME/state.db
 okctl maintenance state-release-lock
 ```
-
-
 
 ### End-to-end test using `okctl upgrade`
 
