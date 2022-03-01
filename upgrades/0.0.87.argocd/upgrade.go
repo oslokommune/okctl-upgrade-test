@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	argocdPkg "github.com/oslokommune/okctl-upgrade/upgrades/0.0.87.argocd/pkg/argocd"
-	"github.com/oslokommune/okctl-upgrade/upgrades/0.0.87.argocd/pkg/lib/cmdflags"
+	argocdPkg "github.com/oslokommune/okctl-upgrade/upgrades/0.0.87.argocd-v2/pkg/argocd"
+	"github.com/oslokommune/okctl-upgrade/upgrades/0.0.87.argocd-v2/pkg/lib/cmdflags"
 )
 
 func upgrade(context Context, flags cmdflags.Flags) error {

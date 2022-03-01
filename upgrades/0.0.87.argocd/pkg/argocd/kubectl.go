@@ -11,7 +11,7 @@ import (
 
 	"k8s.io/client-go/tools/clientcmd"
 
-	"github.com/oslokommune/okctl-upgrade/upgrades/0.0.87.argocd/pkg/lib/logger"
+	"github.com/oslokommune/okctl-upgrade/upgrades/0.0.87.argocd-v2/pkg/lib/logger"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 )
