@@ -1,4 +1,4 @@
-module github.com/oslokommune/okctl-upgrade/upgrades/0.0.88.activate-argo-app-sync
+module github.com/oslokommune/okctl-upgrade/upgrades/0.0.88.activate-argo-app-sync-v2
 
 go 1.16
 
