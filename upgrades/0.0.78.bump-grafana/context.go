@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/oslokommune/okctl-upgrade/upgrades/0.0.78.bump-grafana/pkg/logger"
+	"github.com/oslokommune/okctl-upgrade/upgrades/0.0.78.bump-grafana-v2/pkg/logger"
 )
 
 type Context struct {
