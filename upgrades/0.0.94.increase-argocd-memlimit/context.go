@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/oslokommune/okctl-upgrade/upgrades/0.0.94-increase-argocd-memlimit/pkg/lib/cmdflags"
-	"github.com/oslokommune/okctl-upgrade/upgrades/0.0.94-increase-argocd-memlimit/pkg/lib/logger"
+	"github.com/oslokommune/okctl-upgrade/upgrades/0.0.94.increase-argocd-memlimit/pkg/lib/cmdflags"
+	"github.com/oslokommune/okctl-upgrade/upgrades/0.0.94.increase-argocd-memlimit/pkg/lib/logger"
 )
 
 // Context contains dependencies needed for the upgrade
