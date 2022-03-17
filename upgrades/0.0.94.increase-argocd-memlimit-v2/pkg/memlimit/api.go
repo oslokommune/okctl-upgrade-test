@@ -6,9 +6,9 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/oslokommune/okctl-upgrade/upgrades/0.0.94.increase-argocd-memlimit/pkg/lib/cmdflags"
-	kubectlPkg "github.com/oslokommune/okctl-upgrade/upgrades/0.0.94.increase-argocd-memlimit/pkg/lib/kubectl"
-	"github.com/oslokommune/okctl-upgrade/upgrades/0.0.94.increase-argocd-memlimit/pkg/lib/logger"
+	"github.com/oslokommune/okctl-upgrade/upgrades/0.0.94.increase-argocd-memlimit-v2/pkg/lib/cmdflags"
+	kubectlPkg "github.com/oslokommune/okctl-upgrade/upgrades/0.0.94.increase-argocd-memlimit-v2/pkg/lib/kubectl"
+	"github.com/oslokommune/okctl-upgrade/upgrades/0.0.94.increase-argocd-memlimit-v2/pkg/lib/logger"
 )
 
 // Upgrade upgrades the component

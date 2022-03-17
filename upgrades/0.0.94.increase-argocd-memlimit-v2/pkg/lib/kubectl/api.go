@@ -9,7 +9,7 @@ import (
 	"strings"
 
 	"github.com/Masterminds/semver"
-	"github.com/oslokommune/okctl-upgrade/upgrades/0.0.94.increase-argocd-memlimit/pkg/lib/logger"
+	"github.com/oslokommune/okctl-upgrade/upgrades/0.0.94.increase-argocd-memlimit-v2/pkg/lib/logger"
 	appsV1 "k8s.io/api/apps/v1"
 	containerV1 "k8s.io/api/core/v1"
 	v1 "k8s.io/api/networking/v1"
