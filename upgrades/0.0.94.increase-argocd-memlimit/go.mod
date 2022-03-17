@@ -1,4 +1,4 @@
-module github.com/oslokommune/okctl-upgrade/upgrades/0.0.94-increase-argocd-memlimit
+module github.com/oslokommune/okctl-upgrade/upgrades/0.0.94.increase-argocd-memlimit
 
 go 1.16
 
