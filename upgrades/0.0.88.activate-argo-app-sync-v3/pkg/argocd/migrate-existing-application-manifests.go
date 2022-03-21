@@ -10,10 +10,10 @@ import (
 )
 
 // getAllArgoCDApplicationManifests walks rootDir recursively and returns all files named 'argocd-application.yaml'
-func getAllArgoCDApplicationManifests(filesystem *afero.Afero, rootDir string) ([]string, error) {
+func getAllArgoCDApplicationManifests(filesystem *afero.Afero, rootDir string, targetEnvironment string) ([]string, error) {
 	accumulator := pathAccumulator{Paths: make([]string, 0)}
 
-	err := filesystem.Walk(rootDir, generateAppManifestWalker(&accumulator))
+	err := filesystem.Walk(rootDir, generateAppManifestWalker(&accumulator, targetEnvironment))
 	if err != nil {
 		return nil, fmt.Errorf("gathering ArgoCD application manifests: %w", err)
 	}
@@ -21,7 +21,7 @@ func getAllArgoCDApplicationManifests(filesystem *afero.Afero, rootDir string) (
 	return accumulator.Paths, nil
 }
 
-func generateAppManifestWalker(accumulator *pathAccumulator) filepath.WalkFunc {
+func generateAppManifestWalker(accumulator *pathAccumulator, targetEnvironment string) filepath.WalkFunc {
 	return func(currentPath string, info fs.FileInfo, err error) error {
 		if err != nil {
 			return fmt.Errorf("walking app manifests: %w", err)
@@ -32,6 +32,10 @@ func generateAppManifestWalker(accumulator *pathAccumulator) filepath.WalkFunc {
 		}
 
 		if info.Name() != defaultArgoCDApplicationManifestName {
+			return nil
+		}
+
+		if !strings.Contains(currentPath, targetEnvironment) {
 			return nil
 		}
 

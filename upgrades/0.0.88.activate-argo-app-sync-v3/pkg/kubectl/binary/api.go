@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/oslokommune/okctl-upgrade/upgrades/0.0.88.activate-argo-app-sync-v2/pkg/kubectl"
+	"github.com/oslokommune/okctl-upgrade/upgrades/0.0.88.activate-argo-app-sync-v3/pkg/kubectl"
 )
 
 // Apply runs kubectl apply on a manifest

@@ -1,7 +1,7 @@
 package binary
 
 import (
-	"github.com/oslokommune/okctl-upgrade/upgrades/0.0.88.activate-argo-app-sync-v2/pkg/logger"
+	"github.com/oslokommune/okctl-upgrade/upgrades/0.0.88.activate-argo-app-sync-v3/pkg/logger"
 	"github.com/oslokommune/okctl/pkg/apis/okctl.io/v1alpha1"
 	"github.com/oslokommune/okctl/pkg/binaries"
 	"github.com/oslokommune/okctl/pkg/credentials"

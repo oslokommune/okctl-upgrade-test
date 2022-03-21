@@ -56,7 +56,7 @@ func MigrateExistingApplicationManifests(opts MigrateExistingApplicationManifest
 
 	log.Infof("Migrating existing ArgoCD application manifests to %s\n", relativeAppSyncDir)
 
-	argoCDApplicationManifestPaths, err := getAllArgoCDApplicationManifests(opts.Fs, rootAppDir)
+	argoCDApplicationManifestPaths, err := getAllArgoCDApplicationManifests(opts.Fs, rootAppDir, opts.Cluster.Metadata.Name)
 	if err != nil {
 		return fmt.Errorf("acquiring all ArgoCD application manifest paths: %w", err)
 	}
