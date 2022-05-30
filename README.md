@@ -34,7 +34,7 @@ changes to reuse logic doesn't break any of the migrations using the common logi
 
 # How to create an upgrade
 
-This section describes a workflow for developing, testing and releasing an upgrade. 
+This section describes a workflow for developing, testing and releasing an upgrade.
 
 ## Create the upgrade
 
@@ -87,7 +87,7 @@ okctl maintenance state-release-lock
 
 ### End-to-end test using `okctl upgrade`
 
-A more thorough and better test, is using `okctl upgrade`. 
+A more thorough and better test, is using `okctl upgrade`.
 
 `okctl upgrade` fetches upgrades from releases in this repository. To test that an upgrade works before releasing, we can release
 the upgrade in a mirror repository used for testing: [okctl-upgrade-test](https://github.com/oslokommune/okctl-upgrade-test).
@@ -100,7 +100,7 @@ To do so, follow the following steps.
 In this repository, run
 
 ```shell
-./test-release TAG 
+./test-release TAG
 ```
 
 where TAG is the tag you want to release with. See [release the upgrade](#release-the-upgrade) for details.
@@ -108,7 +108,7 @@ where TAG is the tag you want to release with. See [release the upgrade](#releas
 Example
 
 ```shell
-./test-release 0.0.80+some-component 
+./test-release 0.0.80+some-component
 ```
 
 ### Run the test upgrade
@@ -123,7 +123,7 @@ Then build okctl and run
 
 ```shell
 # Remember to use the okctl binary you just built
-/path/to/local-built/okctl -c cluster.yaml upgrade 
+/path/to/local-built/okctl -c cluster.yaml upgrade
 ```
 
 and see that it works as expected.
@@ -151,7 +151,7 @@ okctl maintenance state-upload state.db
 okctl maintenance state-release-lock
 ```
 
-## Release the upgrade 
+## Release the upgrade
 
 To make the actual release, first push the upgrade to the main branch (through a PR, preferrably). Then run the following:
 
@@ -169,13 +169,22 @@ GitHub actions takes care of the rest.
 If you after releasing an upgrade discover problems with the upgrade, you can:
 
 * delete release and the tag corresponding tag in GitHub
+    To delete the tag, run the following commands:
+
+    ```shell
+	# Delete local tag
+	git tag -d $TAG
+	# Delete remote tag
+	git push --delete origin $TAG
+    ```
+
 * update the upgrade code, and create a new release as described by the steps above.
 
 Note: Update existing released upgrades with care, as some users may have already executed them.
 
 # Implementation details
 
-This section describes inner workings of how Okctl upgrades in the context of this repository work. 
+This section describes inner workings of how Okctl upgrades in the context of this repository work.
 
 The GitHub release action will produce the outputs described below.
 
@@ -203,7 +212,7 @@ TL;DR, some examples:
 ```shell
 0.0.64.argocd
 0.0.65.loki-pvc
-0.0.66 # valid, but not preferable as it's missing an identifier 
+0.0.66 # valid, but not preferable as it's missing an identifier
 ```
 
 * `os` is `Linux` or `Darwin`
