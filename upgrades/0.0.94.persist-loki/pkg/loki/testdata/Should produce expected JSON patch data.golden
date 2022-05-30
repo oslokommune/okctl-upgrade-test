@@ -1,0 +1,40 @@
+[
+  {
+    "op": "add",
+    "path": "/schema_config/configs/-",
+    "value": {
+      "from": "2022-05-09",
+      "store": "aws",
+      "object_store": "s3",
+      "schema": "v11",
+      "index": {
+        "prefix": "okctl-mock-cluster-loki-index_",
+        "period": "336h"
+      }
+    }
+  },
+  {
+    "op": "add",
+    "path": "/storage_config/aws",
+    "value": {
+      "s3": "s3://eu-test-1",
+      "bucketnames": "mock-bucket",
+      "dynamodb": {
+        "dynamodb_url": "dynamodb://eu-test-1"
+      },
+      "sse_encryption": true
+    }
+  },
+  {
+    "op": "replace",
+    "path": "/table_manager",
+    "value": {
+      "retention_deletes_enabled": true,
+      "retention_period": "1344h",
+      "index_tables_provisioning": {
+        "enable_ondemand_throughput_mode": true,
+        "enable_inactive_throughput_on_demand_mode": true
+      }
+    }
+  }
+]
