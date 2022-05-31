@@ -6,6 +6,8 @@
 #	GITHUB_TOKEN={token} - only for `release`, not `release-local`
 # See .github/workflows/release.yml for how these are set up and .goreleaser.yaml on how they are used
 
+GOLANG_CROSS_VERSION=v1.18.2-0
+
 release-local:
 	@echo "Building okctl upgrade: '${UPGRADE_VERSION}' from workdir=${UPGRADE_WORKDIR} locally, not pushing"
 	docker run --rm --privileged \
@@ -13,7 +15,7 @@ release-local:
 		-v /var/run/docker.sock:/var/run/docker.sock \
 		-w /go/src/github.com/oslokommune/okctl-upgrade/${UPGRADE_WORKDIR} \
 		-e UPGRADE_VERSION \
-		ghcr.io/gythialy/golang-cross:v1.17.3-2 release --rm-dist --config=/go/src/github.com/oslokommune/okctl-upgrade/.goreleaser.yaml --skip-publish
+		ghcr.io/gythialy/golang-cross:${GOLANG_CROSS_VERSION} release --rm-dist --config=/go/src/github.com/oslokommune/okctl-upgrade/.goreleaser.yaml --skip-publish
 
 release:
 	@echo "Building okctl upgrade: '${UPGRADE_VERSION}' from workdir=${UPGRADE_WORKDIR}"
@@ -23,4 +25,4 @@ release:
 		-w /go/src/github.com/oslokommune/okctl-upgrade/${UPGRADE_WORKDIR} \
 		-e GITHUB_TOKEN \
 		-e UPGRADE_VERSION \
-		ghcr.io/gythialy/golang-cross:v1.17.3-2 release --rm-dist --config=/go/src/github.com/oslokommune/okctl-upgrade/.goreleaser.yaml
+		ghcr.io/gythialy/golang-cross:${GOLANG_CROSS_VERSION} release --rm-dist --config=/go/src/github.com/oslokommune/okctl-upgrade/.goreleaser.yaml
