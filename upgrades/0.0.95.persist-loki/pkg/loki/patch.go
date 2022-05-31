@@ -7,7 +7,7 @@ import (
 	"time"
 
 	jsonpatch "github.com/evanphx/json-patch/v5"
-	jsp "github.com/oslokommune/okctl-upgrade/upgrades/0.0.94.persist-loki/pkg/lib/jsonpatch"
+	jsp "github.com/oslokommune/okctl-upgrade/upgrades/0.0.95.persist-loki/pkg/lib/jsonpatch"
 )
 
 func generateLokiPersistencePatch(region string, clusterName string, bucketName string, from time.Time) (io.Reader, error) {

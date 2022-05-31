@@ -3,12 +3,12 @@ package s3
 import (
 	"fmt"
 
-	"github.com/oslokommune/okctl-upgrade/upgrades/0.0.94.persist-loki/pkg/lib/context"
+	"github.com/oslokommune/okctl-upgrade/upgrades/0.0.95.persist-loki/pkg/lib/context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/cloudformation"
-	"github.com/oslokommune/okctl-upgrade/upgrades/0.0.94.persist-loki/pkg/lib/cfn"
+	"github.com/oslokommune/okctl-upgrade/upgrades/0.0.95.persist-loki/pkg/lib/cfn"
 )
 
 // CreateBucket knows how to make a bucket through CloudFormation

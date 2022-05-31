@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/oslokommune/okctl-upgrade/upgrades/0.0.94.persist-loki/pkg/apis/okctl.io/v1alpha1"
-	"github.com/oslokommune/okctl-upgrade/upgrades/0.0.94.persist-loki/pkg/kubectl"
-	"github.com/oslokommune/okctl-upgrade/upgrades/0.0.94.persist-loki/pkg/lib/commonerrors"
+	"github.com/oslokommune/okctl-upgrade/upgrades/0.0.95.persist-loki/pkg/apis/okctl.io/v1alpha1"
+	"github.com/oslokommune/okctl-upgrade/upgrades/0.0.95.persist-loki/pkg/kubectl"
+	"github.com/oslokommune/okctl-upgrade/upgrades/0.0.95.persist-loki/pkg/lib/commonerrors"
 	"github.com/spf13/afero"
 
 	"sigs.k8s.io/yaml"

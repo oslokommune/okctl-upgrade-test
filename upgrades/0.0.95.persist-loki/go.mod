@@ -1,4 +1,4 @@
-module github.com/oslokommune/okctl-upgrade/upgrades/0.0.94.persist-loki
+module github.com/oslokommune/okctl-upgrade/upgrades/0.0.95.persist-loki
 
 go 1.18
 

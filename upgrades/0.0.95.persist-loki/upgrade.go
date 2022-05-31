@@ -3,15 +3,15 @@ package main
 import (
 	"fmt"
 
-	"github.com/oslokommune/okctl-upgrade/upgrades/0.0.94.persist-loki/pkg/kubectl"
+	"github.com/oslokommune/okctl-upgrade/upgrades/0.0.95.persist-loki/pkg/kubectl"
 
-	"github.com/oslokommune/okctl-upgrade/upgrades/0.0.94.persist-loki/pkg/lib/context"
+	"github.com/oslokommune/okctl-upgrade/upgrades/0.0.95.persist-loki/pkg/lib/context"
 
-	"github.com/oslokommune/okctl-upgrade/upgrades/0.0.94.persist-loki/pkg/apis/okctl.io/v1alpha1"
-	"github.com/oslokommune/okctl-upgrade/upgrades/0.0.94.persist-loki/pkg/eksctl"
-	"github.com/oslokommune/okctl-upgrade/upgrades/0.0.94.persist-loki/pkg/loki"
-	"github.com/oslokommune/okctl-upgrade/upgrades/0.0.94.persist-loki/pkg/policies"
-	"github.com/oslokommune/okctl-upgrade/upgrades/0.0.94.persist-loki/pkg/s3"
+	"github.com/oslokommune/okctl-upgrade/upgrades/0.0.95.persist-loki/pkg/apis/okctl.io/v1alpha1"
+	"github.com/oslokommune/okctl-upgrade/upgrades/0.0.95.persist-loki/pkg/eksctl"
+	"github.com/oslokommune/okctl-upgrade/upgrades/0.0.95.persist-loki/pkg/loki"
+	"github.com/oslokommune/okctl-upgrade/upgrades/0.0.95.persist-loki/pkg/policies"
+	"github.com/oslokommune/okctl-upgrade/upgrades/0.0.95.persist-loki/pkg/s3"
 )
 
 func upgrade(ctx context.Context, clusterManifest v1alpha1.Cluster) error { //nolint:funlen

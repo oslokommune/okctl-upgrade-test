@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"io"
 
-	jsp "github.com/oslokommune/okctl-upgrade/upgrades/0.0.94.persist-loki/pkg/lib/jsonpatch"
+	jsp "github.com/oslokommune/okctl-upgrade/upgrades/0.0.95.persist-loki/pkg/lib/jsonpatch"
 	"github.com/spf13/afero"
 )
 

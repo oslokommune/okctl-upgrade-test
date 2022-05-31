@@ -6,7 +6,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/oslokommune/okctl-upgrade/upgrades/0.0.94.persist-loki/pkg/lib/context"
+	"github.com/oslokommune/okctl-upgrade/upgrades/0.0.95.persist-loki/pkg/lib/context"
 )
 
 // CreateServiceAccount knows how to create a service account -> IAM role mapping, with a set of policies
