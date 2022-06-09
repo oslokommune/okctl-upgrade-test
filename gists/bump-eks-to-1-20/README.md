@@ -11,8 +11,16 @@ This is required in order to make sure Loki spawns in the correct AZ.
 * Download the latest version of [eksctl](https://github.com/weaveworks/eksctl/releases). (This guide is tested with 0.98.0). (Important: You need to run okctl upgrade before running this, as this breaks the 0.0.95 Loki upgrade)
 * Download [kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl) CLI version 1.20:
 
+Linux:
+
 ```shell
 curl -LO "https://dl.k8s.io/release/v1.20.15/bin/linux/amd64/kubectl"
+```
+
+macOS:
+
+```shell
+curl -LO "https://dl.k8s.io/release/v1.20.15/bin/darwin/amd64/kubectl"
 ```
 
 # Prepare applications
@@ -391,14 +399,6 @@ eksctl get nodegroup --cluster $CLUSTER_NAME
 
 to have a look at the new node groups.
 
-Optional: If you really need to, you can in nodegroup_config.yaml set desiredCapacity to `1`. Or run:
-
-```
-aws autoscaling set-desired-capacity --desired-capacity 1 --auto-scaling-group-name eksctl-my-cluster-nodegroup-ng-generic-1-20-1c-NodeGroup-DFG36JFJY345
-```
-
-to have less down time. This is at the cost of having more nodes than needed.
-
 Make sure these nodes have correct settings (not sure if this is really needed):
 
 ```shell
@@ -411,7 +411,23 @@ kubectl patch daemonset aws-node \
   -p '{"spec": {"template": {"spec": {"initContainers": [{"env":[{"name":"DISABLE_TCP_EARLY_DEMUX","value":"true"}],"name":"aws-vpc-cni-init"}]}}}}'
 ```
 
+## Optional: Set desiredCapacity
+
+If you really need to, you can in nodegroup_config.yaml set desiredCapacity to `1`. Or run:
+
+```
+aws autoscaling set-desired-capacity --desired-capacity 1 --auto-scaling-group-name eksctl-my-cluster-nodegroup-ng-generic-1-20-1c-NodeGroup-DFG36JFJY345
+```
+
+to have less down time. This is at the cost of having more nodes than needed.
+
 # Delete old node(s)
+
+While you do all this, you can run
+
+```
+watch -n 2 kubectl get node -o wide
+``` 
 
 ## Verify node(s) to delete before deleting them
 
@@ -420,26 +436,21 @@ node groups.
 
 (Draining also sets a taint on the nodes, i.e. prohibits new pods to be scheduled on them. So there is no need to taint nodes before draining them.)
 
-To see which nodes and pods are going to be drained, run:
+To see which nodes and pods are going to be drained, run the command below. `kubectl2` with the `2` means
+we're running Kubectl version 1.20.15, not the version shipped with Okctl.
 
 ```shell
-kubectl drain -l 'alpha.eksctl.io/nodegroup-name=ng-generic' --ignore-daemonsets --delete-emptydir-data --dry-run=client
+kubectl2 drain -l 'alpha.eksctl.io/nodegroup-name=ng-generic' --ignore-daemonsets --delete-emptydir-data --dry-run=client
 ```
 
 Verify that the list of nodes above are indeed the nodes you want to drain.
 
-### Optional:
+### Optional: Drain nodes
 
 This isn't needed as the next delete command do this. But if you want, you can drain nodes before deleting the node group.
 
 ```shell
-kubectl drain -l 'alpha.eksctl.io/nodegroup-name=ng-generic' --ignore-daemonsets --delete-local-data
-```
-
-Verify that no pods is running on the nodes in the old nodegroup:
-
-```shell
-kubectl get pod -o wide
+kubectl2 drain -l 'alpha.eksctl.io/nodegroup-name=ng-generic' --ignore-daemonsets --delete-emptydir-data
 ```
 
 ## Delete the old nodegroup
@@ -450,6 +461,12 @@ Then delete the nodegroup:
 
 ```shell
 eksctl delete nodegroup --cluster $CLUSTER_NAME --name ng-generic
+```
+
+Verify that no pods is running on the nodes in the old nodegroup:
+
+```shell
+kubectl get pod -o wide
 ```
 
 # Something wrong happened
