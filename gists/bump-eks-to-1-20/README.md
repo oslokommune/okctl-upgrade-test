@@ -9,7 +9,11 @@ This is required in order to make sure Loki spawns in the correct AZ.
 # Update tools
 
 * Download the latest version of [eksctl](https://github.com/weaveworks/eksctl/releases). (This guide is tested with 0.98.0). (Important: You need to run okctl upgrade before running this, as this breaks the 0.0.95 Loki upgrade)
-* Download [kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl) CLI version 1.20
+* Download [kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl) CLI version 1.20:
+
+```shell
+curl -LO "https://dl.k8s.io/release/v1.20.15/bin/linux/amd64/kubectl"
+```
 
 # Prepare applications
 
@@ -145,18 +149,33 @@ kustomize build infrastructure/applications/hello/overlays/$CLUSTER_NAME | kubec
 
 # Bump EKS control plane
 
+Remember to upgrade your okctl cluster to latest version before continuing.
+
 Bump your EKS control plane, by running.
 
 ```shell
 okctl venv ...
+```
 
+```shell
 eksctl get cluster
+```
 
 # Replace my-cluster with the name of cluster you want to upgrade from above command.
+
+```shell
 CLUSTER_NAME="my-cluster"
+```
+
+```shell
 eksctl upgrade cluster --name $CLUSTER_NAME --version 1.20
+```
+
+```shell
 eksctl upgrade cluster --name $CLUSTER_NAME --version 1.20 --approve 
 ```
+
+Estimated time: 11 min
 
 # Update EKS add-ons
 
@@ -168,13 +187,23 @@ CLUSTER_NAME="my-cluster" # See "eksctl get cluster"
 
 ## Default addons
 
-```
+```shell
 eksctl utils update-kube-proxy --cluster=$CLUSTER_NAME --approve
+```
+
+```shell
 eksctl utils update-coredns --cluster=$CLUSTER_NAME --approve
+```
+
+```shell
 eksctl utils update-aws-node --cluster=$CLUSTER_NAME --approve
+```
 
+```shell
 kubectl -n kube-system set env daemonset aws-node ENABLE_POD_ENI=true --v=9
+```
 
+```shell
 kubectl patch daemonset aws-node \
   -n kube-system \
   -p '{"spec": {"template": {"spec": {"initContainers": [{"env":[{"name":"DISABLE_TCP_EARLY_DEMUX","value":"true"}],"name":"aws-vpc-cni-init"}]}}}}'
@@ -214,53 +243,66 @@ eksctl update addon \
   --name vpc-cni \
   --version 1.7.10-eksbuild.1 \
   --service-account-role-arn $ROLE_ARN
-  
-# Wait until
-# eksctl get addon --cluster $CLUSTER_NAME --name vpc-cni -o json
-# says "Status": "ACTIVE"
+```
 
+Wait until
+
+```shell
+watch -n 5 eksctl get addon --cluster $CLUSTER_NAME --name vpc-cni -o json
+```
+
+says `"Status": "ACTIVE"`.
+
+```shell
 eksctl update addon \
   --cluster $CLUSTER_NAME \
   --name vpc-cni \
   --version 1.8.0-eksbuild.1 \
   --service-account-role-arn $ROLE_ARN
+```
 
-# Wait like above
+Wait like above
 
+```shell
 eksctl update addon \
   --cluster $CLUSTER_NAME \
   --name vpc-cni \
   --version 1.9.3-eksbuild.1 \
   --service-account-role-arn $ROLE_ARN
+```
 
-# Wait like above
+Wait like above.
 
+For the next step, for some reason it results in a configuration conflict if we don't use the `--force` flag, so we have  to add `--force here`.
+
+```shell
 eksctl update addon \
   --cluster $CLUSTER_NAME \
   --name vpc-cni \
   --version 1.10.1-eksbuild.1 \
-  --service-account-role-arn $ROLE_ARN
+  --service-account-role-arn $ROLE_ARN \
+  --force 
+```
 
-# For some reason this is a configuration conflict, so we have to add --force here.
-# See details in bottom of this README.
-
+```shell
 eksctl update addon \
   --cluster $CLUSTER_NAME \
   --name vpc-cni \
   --version 1.10.3-eksbuild.1 \
-  --service-account-role-arn $ROLE_ARN \
-  --force 
+  --service-account-role-arn $ROLE_ARN
+```
 
-# Wait like above
+Wait like above
 
+```shell
 eksctl update addon \
   --cluster $CLUSTER_NAME \
   --name vpc-cni \
   --version 1.11.0-eksbuild.1 \
   --service-account-role-arn $ROLE_ARN
-
-# Wait like above
 ```
+
+Wait like above
 
 # Bump EC2 nodes in your cluster
 
@@ -359,9 +401,11 @@ to have less down time. This is at the cost of having more nodes than needed.
 
 Make sure these nodes have correct settings (not sure if this is really needed):
 
-```
+```shell
 kubectl -n kube-system set env daemonset aws-node ENABLE_POD_ENI=true --v=9
+```
 
+```shell
 kubectl patch daemonset aws-node \
   -n kube-system \
   -p '{"spec": {"template": {"spec": {"initContainers": [{"env":[{"name":"DISABLE_TCP_EARLY_DEMUX","value":"true"}],"name":"aws-vpc-cni-init"}]}}}}'
