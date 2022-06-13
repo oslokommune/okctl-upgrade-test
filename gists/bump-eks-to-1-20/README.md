@@ -8,38 +8,87 @@ This is required in order to make sure Loki spawns in the correct AZ.
 
 # Update tools
 
-* Download the latest version of [eksctl](https://github.com/weaveworks/eksctl/releases). (This guide is tested with 0.98.0). (Important: You need to run okctl upgrade before running this, as this breaks the 0.0.95 Loki upgrade)
+Download by using the commands, so we get the correct version expected by this upgrade.
+
+## eksctl
+
+Important: You need to run `okctl upgrade` before running this, as this breaks the 0.0.95 Loki upgrade.
+
+
+### Linux
 
 ```shell
-curl -LO "https://dl.k8s.io/release/v1.20.15/bin/linux/amd64/kubectl"
-wget -qO- https://dl.k8s.io/release/v1.20.15/bin/linux/amd64/kubectl | tar xvz -C /usr/local/bin/kubectl2
-curl -s some_url | tar xvz - -C /tmp
+curl --silent --location "https://github.com/weaveworks/eksctl/releases/download/v0.98.0/eksctl_Linux_amd64.tar.gz" | tar xz -C /tmp
+sudo mv /tmp/eksctl /usr/local/bin
 ```
 
-macOS:
+### macOS
 
 ```shell
-curl -LO "https://dl.k8s.io/release/v1.20.15/bin/darwin/amd64/kubectl"
+curl --silent --location "https://github.com/weaveworks/eksctl/releases/download/v0.98.0/eksctl_Darwin_amd64.tar.gz" | tar xz -C /tmp
+sudo mv /tmp/eksctl /usr/local/bin
 ```
 
+## kubectl
 
-* Download [kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl) CLI version 1.20:
+We'll rename it "kubectl2" to separate it from `kubectl` shipped with and managed by Okctl.
 
-Linux:
+### Linux
 
 ```shell
-curl -LO "https://dl.k8s.io/release/v1.20.15/bin/linux/amd64/kubectl"
+curl --silent --location "https://dl.k8s.io/release/v1.20.15/bin/linux/amd64/kubectl"
+sudo mv kubectl /usr/local/bin/kubectl2
 ```
 
-macOS:
+### macOS
 
 ```shell
-curl -LO "https://dl.k8s.io/release/v1.20.15/bin/darwin/amd64/kubectl"
+curl --silent --location "https://dl.k8s.io/release/v1.20.15/bin/darwin/amd64/kubectl"
+sudo mv kubectl /usr/local/bin/kubectl2
 ```
 
 # Prepare applications
 
-Your applications need one of the following configureations.
+Your applications need one of the following configurations.
+
+## Remove potential old Okctl configurations
+
+### Remove dnsPolicy
+
+```sh
+grep -A 1 -B 50 -nRsH "dnsPolicy:"
+```
+
+should yield no results. If there are, remove the line `dnsPolicy: Default`.
+
+### Use two securitygroups
+
+Applications that use database need two security groups.
+
+Run
+
+```sh
+kubectl get sgp -A
+```
+
+Every security group should have to security groups, like this:
+
+```
+my-app      my-sgp      ["sg-0ab340d9f94c4c0a1","sg-0ed2bd34231484bb3"]
+```
+
+and NOT like this:
+
+```
+my-app      my-sgp      ["sg-0ab340d9f94c4c0a1"]
+```
+
+If the latter is the case, you need to update your security group policies (Yto include both the app security group, and the cluster security group. The first should always be there (configured by Okctl). The last can be found by running:
+
+```sh
+aws eks describe-cluster --name booking-dev --query cluster.resourcesVpcConfig.clusterSecurityGroupId
+```
+
 
 ## Alternative 1: No downtime
 
@@ -313,7 +362,7 @@ eksctl update addon \
 
 Wait like above.
 
-For the next step, for some reason it results in a configuration conflict if we don't use the `--force` flag, so we have  to add `--force here`.
+For the next step, for some reason it results in a configuration conflict if we don't use the `--force` flag, so we have  to add `--force` here.
 
 ```shell
 eksctl update addon \
@@ -443,15 +492,6 @@ kubectl patch daemonset aws-node \
   -p '{"spec": {"template": {"spec": {"initContainers": [{"env":[{"name":"DISABLE_TCP_EARLY_DEMUX","value":"true"}],"name":"aws-vpc-cni-init"}]}}}}'
 ```
 
-## Optional: Set desiredCapacity
-
-If you really need to, you can in nodegroup_config.yaml set desiredCapacity to `1`. Or run:
-
-```
-aws autoscaling set-desired-capacity --desired-capacity 1 --auto-scaling-group-name eksctl-my-cluster-nodegroup-ng-generic-1-20-1c-NodeGroup-DFG36JFJY345
-```
-
-to have less down time. This is at the cost of having more nodes than needed.
 
 # Delete old node(s)
 
@@ -461,15 +501,15 @@ While you do all this, you can run
 watch -n 2 kubectl get node -o wide
 ``` 
 
-## Verify node(s) to delete before deleting them
+## Verify what to delete
 
-You can skip this if you are sure what nodes are being deleted in the next step. Use `eksctl get nodegroup` to find names of 
-node groups.
+Verify pod(s) and node(s) to delete before deleting them.
+
+Use `eksctl get nodegroup` to find names of node groups.
 
 (Draining also sets a taint on the nodes, i.e. prohibits new pods to be scheduled on them. So there is no need to taint nodes before draining them.)
 
-To see which nodes and pods are going to be drained, run the command below. `kubectl2` with the `2` means
-we're running Kubectl version 1.20.15, not the version shipped with Okctl.
+To see which nodes and pods are going to be drained, run the command below.  `kubectl2` with the `2` means we're running Kubectl version 1.20.15, not the version shipped with Okctl.
 
 ```shell
 kubectl2 drain -l 'alpha.eksctl.io/nodegroup-name=ng-generic' --ignore-daemonsets --delete-emptydir-data --dry-run=client
@@ -477,9 +517,9 @@ kubectl2 drain -l 'alpha.eksctl.io/nodegroup-name=ng-generic' --ignore-daemonset
 
 Verify that the list of nodes above are indeed the nodes you want to drain.
 
-### Optional: Drain nodes
+## Drain nodes
 
-This isn't needed as the next delete command do this. But if you want, you can drain nodes before deleting the node group.
+Drain nodes before deleting the node group:
 
 ```shell
 kubectl2 drain -l 'alpha.eksctl.io/nodegroup-name=ng-generic' --ignore-daemonsets --delete-emptydir-data
@@ -546,3 +586,15 @@ conflicts with "kubectl-client-side-apply" using apps/v1:
 # Resources
 
 - https://eksctl.io/usage/cluster-upgrade/
+
+## Commands
+
+## Set desiredCapacity
+
+If you really need to, you can in nodegroup_config.yaml set desiredCapacity to `1`. Or run:
+
+```
+aws autoscaling set-desired-capacity --desired-capacity 1 --auto-scaling-group-name eksctl-my-cluster-nodegroup-ng-generic-1-20-1c-NodeGroup-DFG36JFJY345
+```
+
+to have less down time. This is at the cost of having more nodes than needed.
