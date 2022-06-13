@@ -9,6 +9,20 @@ This is required in order to make sure Loki spawns in the correct AZ.
 # Update tools
 
 * Download the latest version of [eksctl](https://github.com/weaveworks/eksctl/releases). (This guide is tested with 0.98.0). (Important: You need to run okctl upgrade before running this, as this breaks the 0.0.95 Loki upgrade)
+
+```shell
+curl -LO "https://dl.k8s.io/release/v1.20.15/bin/linux/amd64/kubectl"
+wget -qO- https://dl.k8s.io/release/v1.20.15/bin/linux/amd64/kubectl | tar xvz -C /usr/local/bin/kubectl2
+curl -s some_url | tar xvz - -C /tmp
+```
+
+macOS:
+
+```shell
+curl -LO "https://dl.k8s.io/release/v1.20.15/bin/darwin/amd64/kubectl"
+```
+
+
 * Download [kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl) CLI version 1.20:
 
 Linux:
