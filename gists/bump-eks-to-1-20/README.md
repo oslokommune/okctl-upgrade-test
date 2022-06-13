@@ -25,15 +25,15 @@ curl -LO "https://dl.k8s.io/release/v1.20.15/bin/darwin/amd64/kubectl"
 
 # Prepare applications
 
-To have no downtime, your applications need the following configureation
+Your applications need one of the following configureations.
+
+## Alternative 1: No downtime
 
 * Deployment: Use `RollingUpdate` strategy
 * Deployment: Use `replicas: 2` or more
 * Create a `PodDisruptionBudget`
 
-## Use RollingUpdate
-
-Google how to apply using `maxUnavailable=0` and `type: RollingUpdate`, or `type: Recreate`.
+Google how to apply using `maxUnavailable=0` and `type: RollingUpdate`.
 
 Example:
 
@@ -44,9 +44,27 @@ metadata:
   name: hello
   namespace: hello
 spec:
+  replicas: 2
   strategy:
     rollingUpdate:
       maxUnavailable: 0
+```
+
+## Alternative 2: For stateful applications that must not co-exist 
+
+* Deployment: Use `Recreate` strategy
+* Deployment: Use `replicas: 1`
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello
+  namespace: hello
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
 ```
 
 ## Add node selectors to pods using PVCs
