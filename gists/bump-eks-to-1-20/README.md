@@ -401,7 +401,7 @@ We're using 3 nodes to ensure we have 1 node for every AZ. We need one in every 
 be placed on a node in the same AZ as the PVC. For instance: If some-app use a PVC in AZ B, we need to have a node in AZ B as
 well.
 
-In the following code snippet, replace:
+Copy the code block into a file, for instance `create_nodegroup_config.sh`. Replace:
 * `CLUSTER_NAME` with the name from `eksctl get cluster`
 * `REGION` with your region.
 
@@ -517,15 +517,9 @@ kubectl2 drain -l 'alpha.eksctl.io/nodegroup-name=ng-generic' --ignore-daemonset
 
 Verify that the list of nodes above are indeed the nodes you want to drain.
 
-## Drain nodes
-
-Drain nodes before deleting the node group:
-
-```shell
-kubectl2 drain -l 'alpha.eksctl.io/nodegroup-name=ng-generic' --ignore-daemonsets --delete-emptydir-data
-```
-
 ## Delete the old nodegroup
+
+We'll drain and delete nodegruop in one go. 
 
 Use `eksctl get nodegroup --cluster $CLUSTER_NAME` to verify names of the old node group. It should be `ng-generic`.
 
@@ -542,6 +536,19 @@ kubectl get pod -o wide
 ```
 
 # Something wrong happened
+
+## eksctl delete nodegroup cannot evict pods
+
+Abort/CTRL+C your execution of `eksctl delete nodegroup` if it's running, because we will be running the
+command below, which we don't want to run at the same time.
+
+Run
+
+```shell
+kubectl2 drain -l 'alpha.eksctl.io/nodegroup-name=ng-generic' --ignore-daemonsets --delete-emptydir-data
+```
+
+This should output exactly which pods that cannot be evicted due to its `PodDisruptionBudget`.
 
 ## Apps have downtime when draining nodes
 
