@@ -519,9 +519,15 @@ Verify that the list of nodes above are indeed the nodes you want to drain.
 
 ## Delete the old nodegroup
 
-We'll drain and delete nodegruop in one go. 
+We'll drain and delete the old node group in one go.
 
-Use `eksctl get nodegroup --cluster $CLUSTER_NAME` to verify names of the old node group. It should be `ng-generic`.
+Use
+
+```shell
+eksctl get nodegroup --cluster $CLUSTER_NAME`
+```
+
+to verify names of the old node group. It should be `ng-generic`.
 
 Then delete the nodegroup:
 
