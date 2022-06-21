@@ -83,10 +83,10 @@ and NOT like this:
 my-app      my-sgp      ["sg-0ab340d9f94c4c0a1"]
 ```
 
-If the latter is the case, you need to update your security group policies (Yto include both the app security group, and the cluster security group. The first should always be there (configured by Okctl). The last can be found by running:
+If the latter is the case, you need to update your security group policies to include both the app security group, and the cluster security group. The first should always be there (configured by Okctl). The last can be found by running:
 
 ```sh
-aws eks describe-cluster --name booking-dev --query cluster.resourcesVpcConfig.clusterSecurityGroupId
+aws eks describe-cluster --name my-cluster-dev --query cluster.resourcesVpcConfig.clusterSecurityGroupId
 ```
 
 
@@ -516,6 +516,8 @@ kubectl2 drain -l 'alpha.eksctl.io/nodegroup-name=ng-generic' --ignore-daemonset
 ```
 
 Verify that the list of nodes above are indeed the nodes you want to drain.
+
+You might get an error (not a warning) that specifies that some pods cannot be evicted, for instance `pgbouncer` from Okctl. Delete this pods (using `kubectl delete pod pod-to-delete`) and run the `kubectl2 drain` command again. 
 
 ## Delete the old nodegroup
 
