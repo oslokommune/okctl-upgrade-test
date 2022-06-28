@@ -332,6 +332,7 @@ eksctl update addon \
   --name vpc-cni \
   --version 1.7.10-eksbuild.1 \
   --service-account-role-arn $ROLE_ARN
+  --force
 ```
 
 Wait until
@@ -370,7 +371,7 @@ eksctl update addon \
   --name vpc-cni \
   --version 1.10.1-eksbuild.1 \
   --service-account-role-arn $ROLE_ARN \
-  --force 
+  --force
 ```
 
 ```shell
