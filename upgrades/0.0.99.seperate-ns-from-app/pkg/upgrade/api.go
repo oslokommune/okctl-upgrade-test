@@ -3,6 +3,9 @@ package upgrade
 import (
 	"context"
 	"fmt"
+	"path"
+
+	"github.com/oslokommune/okctl-upgrade/upgrades/0.0.99.seperate-ns-from-app/pkg/lib/commonerrors"
 
 	"github.com/oslokommune/okctl-upgrade/upgrades/0.0.99.seperate-ns-from-app/pkg/kubectl"
 
@@ -21,6 +24,13 @@ func Start(_ context.Context, logger logging.Logger, fs *afero.Afero, flags cmdf
 	absoluteRepositoryRootDir, err := paths.GetRepositoryRootDirectory()
 	if err != nil {
 		return fmt.Errorf("acquiring repository root dir: %w", err)
+	}
+
+	logger.Debug("Running preflight tests")
+
+	err = preflight(logger, fs, absoluteRepositoryRootDir, cluster)
+	if err != nil {
+		return fmt.Errorf("running preflight tests: %w", err)
 	}
 
 	logger.Debug("Enabling namespace synchronization")
@@ -48,6 +58,23 @@ func Start(_ context.Context, logger logging.Logger, fs *afero.Afero, flags cmdf
 	})
 	if err != nil {
 		return fmt.Errorf("migrating existing namespaces: %w", err)
+	}
+
+	return nil
+}
+
+func preflight(logger logging.Logger, fs *afero.Afero, absoluteRepositoryRootDir string, cluster v1alpha1.Cluster) error {
+	absoluteApplicationsDir := path.Join(absoluteRepositoryRootDir, cluster.Github.OutputPath, paths.ApplicationsDir)
+
+	hasApplicationsDir, err := fs.Exists(absoluteApplicationsDir)
+	if err != nil {
+		return fmt.Errorf("checking applications directory existence: %w", err)
+	}
+
+	if !hasApplicationsDir {
+		logger.Debug("No application directory found, ignoring upgrade")
+
+		return fmt.Errorf("no application directory found: %w", commonerrors.ErrNothingToDo)
 	}
 
 	return nil

@@ -40,3 +40,14 @@ lint: $(GOLANGCILINT)
 	$(GOLANGCILINT) run
 
 check: fmt lint test
+
+# The following targets only works with some manual operations, i.e: creating a folder called "manual-tests", then clone
+# the relevant IAC repositories into the newly created folder. 
+clean-upgrade:
+	find manual-tests -name 'upgrade' | xargs rm
+distribute-upgrade:
+	go build -o upgrade main.go
+	cp ./upgrade manual-tests/automatiskeprosesser-aws-infra/upgrade
+	cp ./upgrade manual-tests/helsedata-okctlcfg/upgrade
+	cp ./upgrade manual-tests/origo-booking-iac/upgrade
+	cp ./upgrade manual-tests/veiviser-infra/upgrade

@@ -66,7 +66,14 @@ func buildRootCommand() *cobra.Command {
 			return nil
 		},
 		RunE: func(_ *cobra.Command, args []string) error {
-			return upgrade.Start(ctx, logger, fs, flags, cluster)
+			err := upgrade.Start(ctx, logger, fs, flags, cluster)
+			if errors.Is(err, commonerrors.ErrNothingToDo) {
+				logger.Debug("Nothing to do, ignoring upgrade")
+
+				return nil
+			}
+
+			return err
 		},
 	}
 
