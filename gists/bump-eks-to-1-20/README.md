@@ -187,6 +187,8 @@ spec:
 
 ## Add a PodDisruptionBudget for every application
 
+**NOTE** Applications using PVC's cannot use PodDisruptionBudgets - see note in the bottom of this title.
+
 A `PodDisruptionBudget` can be used to make sure for instance 1 pod is always in Running state when draining nodes. For more details, see [documentation](https://kubernetes.io/docs/tasks/run-application/configure-pdb/).
 
 For each application, create a `infrastructure/applications/hello/base/pod-disruption-budget.yaml` with contents:
@@ -217,6 +219,24 @@ resources:
 - pod-disruption-budget.yaml
 ```
 
+### For applications using PVCs: No downtime is impossible
+
+Applications using PVCs cannot use PodDisruptionBudgets, so no downtime will be impossible during node replacements (i.e. an upgrade).
+
+Because our PVC's are using the mode `ReadWriteOnce`, it will become impossible for Kubernetes to one replica of a deployment on a new node, at the same time as it is running a replica on an old node - because `ReadWriteOnce` does not allow it. The
+definition of ReadWriteOnce is:
+
+> ReadWriteOnce – the volume can be mounted as read-write by a single node
+
+Hence, we cannot use a PodDisruptionBudget for applications using PVCs. If we did the pod would never be evicted, because the pod/replica trying to spawn on a new node cannot spawn because the volume is being used by a pod/replica on an old node. We have tested and confirmed this behavior.
+
+The solution is:
+* Accept some downtime during upgrading / node replacement
+* Don't use PVCs, use S3 or something else for your applications
+* (Far fetched: Implement support for a PVC driver that supports `ReadWriteMany`)
+
+See discussion here: https://stackoverflow.com/a/62216783/915441
+
 ## Apply changes
 
 Run
@@ -225,7 +245,7 @@ Run
 git add .
 git commit -m "Add node selector to deployments"
 git push
-``` 
+```
 
 ArgoCD will then update your apps.
 
@@ -500,7 +520,7 @@ While you do all this, you can run
 
 ```
 watch -n 2 kubectl get node -o wide
-``` 
+```
 
 ## Verify what to delete
 
