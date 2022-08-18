@@ -34,7 +34,7 @@ func main() {
 func buildRootCommand() *cobra.Command {
 	flags := cmdflags.Flags{}
 
-	var log logging.Logger
+	var logger logging.Logger
 
 	filename := filepath.Base(os.Args[0])
 
@@ -47,15 +47,22 @@ func buildRootCommand() *cobra.Command {
 		SilenceUsage:  true, // true because we don't want to show usage if an errors occurs
 		PreRunE: func(_ *cobra.Command, args []string) error {
 			if flags.Debug {
-				log = logging.New(logging.Debug)
+				logger = logging.New(logging.Debug)
 			} else {
-				log = logging.New(logging.Info)
+				logger = logging.New(logging.Info)
 			}
 
 			return nil
 		},
 		RunE: func(_ *cobra.Command, args []string) error {
-			return upgrade.Start(log, kubectl.New())
+			err := upgrade.Start(logger, kubectl.New())
+			if errors.Is(err, commonerrors.ErrNothingToDo) {
+				logger.Debug("Nothing to do, ignoring upgrade")
+
+				return nil
+			}
+
+			return err
 		},
 	}
 
