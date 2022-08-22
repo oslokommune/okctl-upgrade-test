@@ -1,6 +1,7 @@
 package upgrade_test
 
 import (
+	"github.com/oslokommune/okctl-upgrade/upgrades/okctl-upgrade/upgrades/0.0.103.eks-1-21/pkg/kubectl/version"
 	"testing"
 
 	"github.com/oslokommune/okctl-upgrade/upgrades/okctl-upgrade/upgrades/0.0.103.eks-1-21/pkg/kubectl"
@@ -44,10 +45,10 @@ type KubectlClientMock struct {
 	serverMinorVersion string
 }
 
-func (m KubectlClientMock) GetVersion() (kubectl.Versions, error) {
-	return kubectl.Versions{
-		ClientVersion: kubectl.Version{},
-		ServerVersion: kubectl.Version{
+func (m KubectlClientMock) GetVersion() (version.Versions, error) {
+	return version.Versions{
+		ClientVersion: version.Version{},
+		ServerVersion: version.Version{
 			Minor: m.serverMinorVersion,
 		},
 	}, nil

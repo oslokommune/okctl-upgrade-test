@@ -3,11 +3,12 @@ package kubectl
 import (
 	"bytes"
 	"fmt"
+	"github.com/oslokommune/okctl-upgrade/upgrades/okctl-upgrade/upgrades/0.0.103.eks-1-21/pkg/kubectl/version"
 	"os"
 	"os/exec"
 )
 
-func (kubectlClient) GetVersion() (Versions, error) {
+func (kubectlClient) GetVersion() (version.Versions, error) {
 	cmd := exec.Command(defaultBinaryName, "version", "-o", "yaml") //nolint:gosec
 
 	stderr := bytes.Buffer{}
@@ -19,10 +20,10 @@ func (kubectlClient) GetVersion() (Versions, error) {
 
 	err := cmd.Run()
 	if err != nil {
-		return Versions{}, fmt.Errorf("%s: %w", stderr.String(), err)
+		return version.Versions{}, fmt.Errorf("%s: %w", stderr.String(), err)
 	}
 
-	return ParseVersion(stdout.Bytes())
+	return version.ParseVersions(stdout.Bytes())
 }
 
 func New() Client {

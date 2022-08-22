@@ -1,10 +1,9 @@
-package kubectl_test
+package version_test
 
 import (
 	_ "embed"
+	"github.com/oslokommune/okctl-upgrade/upgrades/okctl-upgrade/upgrades/0.0.103.eks-1-21/pkg/kubectl/version"
 	"testing"
-
-	"github.com/oslokommune/okctl-upgrade/upgrades/okctl-upgrade/upgrades/0.0.103.eks-1-21/pkg/kubectl"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -30,7 +29,7 @@ func TestParseVersion(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			yamlAsBytes := []byte(tc.yaml)
 
-			got, err := kubectl.ParseVersion(yamlAsBytes)
+			got, err := version.ParseVersions(yamlAsBytes)
 			require.NoError(t, err)
 
 			assert.Equal(t, tc.want, got.ServerVersion.Minor)
@@ -55,7 +54,7 @@ func TestVersion_MinorAsInt(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			yamlAsBytes := []byte(tc.yaml)
 
-			got, err := kubectl.ParseVersion(yamlAsBytes)
+			got, err := version.ParseVersions(yamlAsBytes)
 			require.NoError(t, err)
 
 			minor, err := got.ServerVersion.MinorAsInt()
