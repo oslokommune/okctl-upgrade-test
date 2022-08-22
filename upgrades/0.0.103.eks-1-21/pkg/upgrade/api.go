@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/oslokommune/okctl-upgrade/upgrades/okctl-upgrade/upgrades/0.0.103.eks-1-21/pkg/kubectl"
-	"github.com/oslokommune/okctl-upgrade/upgrades/okctl-upgrade/upgrades/0.0.103.eks-1-21/pkg/lib/commonerrors"
 	"github.com/oslokommune/okctl-upgrade/upgrades/okctl-upgrade/upgrades/0.0.103.eks-1-21/pkg/lib/logging"
 )
 
@@ -25,7 +24,7 @@ func Start(logger logging.Logger, kubectl kubectl.Client) error {
 		logger.Debugf("Not doing anything, as this upgrade targets EKS version %d and below, and"+
 			" current EKS minor version is already '%d'.\n",
 			minimumEKSMinorVersion-1, currentEKSMinorVersion)
-		return commonerrors.ErrNothingToDo
+		//return commonerrors.ErrNothingToDo
 	}
 
 	logger.Info("")
