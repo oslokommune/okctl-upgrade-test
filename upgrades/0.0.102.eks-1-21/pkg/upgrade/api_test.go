@@ -2,6 +2,7 @@ package upgrade_test
 
 import (
 	"github.com/oslokommune/okctl-upgrade/upgrades/okctl-upgrade/upgrades/0.0.102.eks-1-21/pkg/kubectl/version"
+	"github.com/oslokommune/okctl-upgrade/upgrades/okctl-upgrade/upgrades/0.0.102.eks-1-21/pkg/lib/cmdflags"
 	"testing"
 
 	"github.com/oslokommune/okctl-upgrade/upgrades/okctl-upgrade/upgrades/0.0.102.eks-1-21/pkg/kubectl"
@@ -31,9 +32,10 @@ func TestStart(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			kubectlClient := mockKubectlWithVersion(tc.version)
+			flags := cmdflags.Flags{}
 			logger := logging.New(logging.Debug)
 
-			err := upgrade.Start(logger, kubectlClient)
+			err := upgrade.Start(logger, flags, kubectlClient)
 
 			assert.Error(t, err)
 			assert.Containsf(t, err.Error(), tc.errorContains, "unexpected error message")

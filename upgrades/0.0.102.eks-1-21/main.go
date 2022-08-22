@@ -55,7 +55,7 @@ func buildRootCommand() *cobra.Command {
 			return nil
 		},
 		RunE: func(_ *cobra.Command, args []string) error {
-			err := upgrade.Start(logger, kubectl.New())
+			err := upgrade.Start(logger, flags, kubectl.New())
 			if errors.Is(err, commonerrors.ErrNothingToDo) {
 				logger.Debug("Nothing to do, ignoring upgrade")
 
